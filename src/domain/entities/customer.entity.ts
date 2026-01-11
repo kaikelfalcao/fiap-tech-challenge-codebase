@@ -1,86 +1,52 @@
-import { Document } from '../value-objects/document.vo';
+import { RegistrationNumber } from './../value-objects/registration-number.vo';
 import { Email } from '../value-objects/email.vo';
-import { Entity } from '../entity';
-import { UUID } from 'node:crypto';
 
-export interface CustomerProps {
-  id?: string;
-  name: string;
-  email: Email;
-  document: Document;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-export class Customer extends Entity<CustomerProps> {
-  protected constructor(props: CustomerProps, id?: UUID) {
-    super(props, id);
-  }
+export class Customer {
+  protected constructor(
+    public id: string | undefined,
+    public name: string,
+    public email: Email,
+    public registrationNumber: RegistrationNumber,
+    public createdAt?: Date,
+    public updatedAt?: Date,
+  ) {}
 
   public static create(
-    props: {
-      name: string;
-      email: string;
-      document: string;
-      createdAt?: Date;
-      updatedAt?: Date;
-    },
-    id?: UUID,
-  ): Customer {
+    name: string,
+    email: string,
+    registrationNumber: string,
+    id?: string,
+    createdAt?: Date,
+    updatedAt?: Date,
+  ) {
+    if (name.length < 2) {
+      throw new Error('Invalid customer name');
+    }
+
     return new Customer(
-      {
-        ...props,
-        email: new Email({ value: props.email }),
-        document: new Document({ value: props.document }),
-      },
       id,
+      name,
+      Email.create(email),
+      RegistrationNumber.create(registrationNumber),
+      createdAt,
+      updatedAt,
     );
   }
 
-  get id(): string {
-    return this._id.toString();
+  changeName(name: string) {
+    if (name.length < 2) {
+      throw new Error('Invalid customer name');
+    }
+    this.name = name;
   }
 
-  get name(): string {
-    return this.props.name;
+  changeEmail(email: string) {
+    const emailVO = Email.create(email);
+    this.email = emailVO;
   }
 
-  set name(name: string) {
-    this.props.name = name;
-  }
-
-  get email(): Email {
-    return this.props.email;
-  }
-
-  set email(email: string) {
-    this.props.email = new Email({ value: email });
-  }
-
-  get document(): Document {
-    return this.props.document;
-  }
-
-  set document(document: string) {
-    this.props.document = new Document({ value: document });
-  }
-
-  get createdAt(): Date | undefined {
-    return this.props.createdAt;
-  }
-
-  get updatedAt(): Date | undefined {
-    return this.props.updatedAt;
-  }
-
-  public toJSON() {
-    return {
-      id: this.id,
-      name: this.name,
-      email: this.email.toJSON(),
-      document: this.document.toJSON(),
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt,
-    };
+  changeRegistrationNumber(number: string) {
+    const registrationNumberVO = RegistrationNumber.create(number);
+    this.registrationNumber = registrationNumberVO;
   }
 }

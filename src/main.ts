@@ -1,11 +1,14 @@
+import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { otelSDK } from './infrastructure/telemetry/otel';
+import { ConfigService } from './infra/config/config.service';
+import { GlobalExceptionFilter } from './infra/nestjs/filters/global-exception.filter';
 
-otelSDK.start();
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const config = app.get(ConfigService);
   app.setGlobalPrefix('api');
-  await app.listen(process.env.APP_PORT ?? 3000);
+  app.useGlobalFilters(new GlobalExceptionFilter());
+  await app.listen(config.app.port);
 }
 bootstrap();

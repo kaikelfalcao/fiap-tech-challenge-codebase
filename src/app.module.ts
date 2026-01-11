@@ -1,19 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { TypeOrmConfigModule } from './infrastructure/persistence/typeorm/typeorm.module';
-import { CustomerModule } from './infrastructure/nest/modules/customer.module';
-import { OpenTelemetryModule } from 'nestjs-otel';
+import { DatabaseModule } from './infra/typeorm/typeorm.module';
+import { CustomerModule } from './infra/nestjs/modules/customer.module';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
-    OpenTelemetryModule.forRoot({
-      metrics: {
-        hostMetrics: true,
-      },
-    }),
-    TypeOrmConfigModule,
-    CustomerModule,
-  ],
+  imports: [ConfigModule, DatabaseModule, CustomerModule],
 })
 export class AppModule {}

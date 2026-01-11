@@ -1,0 +1,20 @@
+meta {
+  name: FIND BY ID
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{API_URL}}/customers/:id
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: 04fa8a75-c651-4689-9d6a-2c1bb1db376d
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

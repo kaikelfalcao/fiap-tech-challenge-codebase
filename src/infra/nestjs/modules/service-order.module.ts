@@ -14,6 +14,11 @@ import { FindCustomerUseCase } from 'src/application/usecases/customer/find-cust
 import { ReservePartsUseCase } from 'src/application/usecases/part/reserve-part.usecase';
 import { GetRepairsUseCase } from 'src/application/usecases/repair/get-repair.usecase';
 import { CreateServiceOrderUseCase } from 'src/application/usecases/service-order/create-service-order.usecase';
+import { UpdateServiceOrderUseCase } from 'src/application/usecases/service-order/update-service-order.usecase';
+import { UpdateServiceOrderStatusUseCase } from 'src/application/usecases/service-order/update-service-order-status.usecase';
+import { FindServiceOrderUseCase } from 'src/application/usecases/service-order/find-service-order.usecase';
+import { FindAllServiceOrderUseCase } from 'src/application/usecases/service-order/find-all-service-order.usecase';
+import { DeleteServiceOrderUseCase } from 'src/application/usecases/service-order/delete-service-order.usecase';
 
 @Module({
   imports: [
@@ -39,6 +44,11 @@ import { CreateServiceOrderUseCase } from 'src/application/usecases/service-orde
     GetRepairsUseCase,
 
     CreateServiceOrderUseCase,
+    UpdateServiceOrderUseCase,
+    UpdateServiceOrderStatusUseCase,
+    FindServiceOrderUseCase,
+    FindAllServiceOrderUseCase,
+    DeleteServiceOrderUseCase,
   ],
 })
 export class ServiceOrderModule {}

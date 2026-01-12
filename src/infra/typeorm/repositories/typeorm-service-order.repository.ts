@@ -23,12 +23,16 @@ export class TypeOrmServiceOrderRepository implements ServiceOrderRepository {
     await this.repo.save(orm);
   }
 
-  async findById(id: string): Promise<ServiceOrder | null> {
+  async findById(id: string): Promise<ServiceOrder> {
     const orm = await this.repo.findOne({
       where: { id },
       relations: ['parts', 'repairs'],
     });
-    return orm ? ServiceOrderMapper.toEntity(orm) : null;
+
+    if (!orm) {
+      throw new Error('Not Found Service Order');
+    }
+    return ServiceOrderMapper.toEntity(orm);
   }
 
   async findAll(): Promise<ServiceOrder[]> {

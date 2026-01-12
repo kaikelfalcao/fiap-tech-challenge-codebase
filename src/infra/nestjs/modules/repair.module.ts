@@ -22,6 +22,6 @@ import { GetRepairsUseCase } from 'src/application/usecases/repair/get-repair.us
     DeleteRepairUseCase,
     GetRepairsUseCase,
   ],
-  exports: [GetRepairsUseCase, 'RepairRepository'],
+  exports: [GetRepairsUseCase, FindRepairUseCase, 'RepairRepository'],
 })
 export class RepairModule {}

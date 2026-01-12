@@ -18,7 +18,9 @@ export class PartsOnServiceOrdersOrm {
   @PrimaryColumn()
   partId: string;
 
-  @ManyToOne(() => ServiceOrderOrm, (order) => order.parts)
+  @ManyToOne(() => ServiceOrderOrm, (order) => order.parts, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'serviceOrderId' })
   serviceOrder: ServiceOrderOrm;
 

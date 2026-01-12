@@ -55,9 +55,35 @@ export class ServiceOrder {
     this.recalculateTotalCost();
   }
 
-  changeStatus(status: ServiceOrderStatus) {
-    this.status = status;
-    if (status === ServiceOrderStatus.Finished) this.finishedAt = new Date();
+  changeStatus(newStatus: ServiceOrderStatus) {
+    const validTransitions: Record<ServiceOrderStatus, ServiceOrderStatus[]> = {
+      RECEIVED: [ServiceOrderStatus.InDiagnosis, ServiceOrderStatus.Canceled],
+      IN_DIAGNOSIS: [
+        ServiceOrderStatus.AwaitingApproval,
+        ServiceOrderStatus.Canceled,
+      ],
+      AWAITING_APPROVAL: [
+        ServiceOrderStatus.InProgress,
+        ServiceOrderStatus.Canceled,
+      ],
+      IN_PROGRESS: [
+        ServiceOrderStatus.Delivered,
+        ServiceOrderStatus.Canceled,
+        ServiceOrderStatus.Finished,
+      ],
+      DELIVERED: [ServiceOrderStatus.Finished],
+      FINISHED: [],
+      CANCELED: [],
+    };
+
+    if (!validTransitions[this.status].includes(newStatus)) {
+      throw new Error(`Transição inválida de ${this.status} para ${newStatus}`);
+    }
+
+    this.status = newStatus;
+    if (newStatus === ServiceOrderStatus.Finished) {
+      this.finishedAt = new Date();
+    }
   }
 
   private recalculateTotalCost() {

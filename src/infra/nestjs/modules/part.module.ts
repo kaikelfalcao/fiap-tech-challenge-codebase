@@ -5,6 +5,7 @@ import { DeletePartUseCase } from 'src/application/usecases/part/delete-part.use
 import { FindAllPartsUseCase } from 'src/application/usecases/part/find-all-parts.usecase';
 import { FindPartUseCase } from 'src/application/usecases/part/find-part.usecase';
 import { ReservePartsUseCase } from 'src/application/usecases/part/reserve-part.usecase';
+import { ReturnPartsUseCase } from 'src/application/usecases/part/return-part.usecase';
 import { UpdatePartUseCase } from 'src/application/usecases/part/update-part.usecase';
 import { PartOrm } from 'src/infra/typeorm/entities/part.orm';
 import { TypeOrmPartRepository } from 'src/infra/typeorm/repositories/typeorm-part.repository';
@@ -21,7 +22,13 @@ import { PartController } from 'src/interface/http/part.controller';
     UpdatePartUseCase,
     DeletePartUseCase,
     ReservePartsUseCase,
+    ReturnPartsUseCase,
   ],
-  exports: [ReservePartsUseCase, 'PartRepository'],
+  exports: [
+    FindPartUseCase,
+    ReservePartsUseCase,
+    ReturnPartsUseCase,
+    'PartRepository',
+  ],
 })
 export class PartModule {}

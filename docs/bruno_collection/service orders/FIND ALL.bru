@@ -1,0 +1,15 @@
+meta {
+  name: FIND ALL
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{API_URL}}/service-orders
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

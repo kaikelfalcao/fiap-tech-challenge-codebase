@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from 'src/application/base.usecase';
-import type { CustomerRepository } from 'src/application/ports/customer.repository';
+import type { CustomerRepository } from 'src/domain/repositories/customer.repository';
 import { Customer } from 'src/domain/entities/customer.entity';
 
 @Injectable()

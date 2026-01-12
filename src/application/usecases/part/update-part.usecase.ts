@@ -1,5 +1,5 @@
 import { Part } from 'src/domain/entities/part.entity';
-import type { PartRepository } from 'src/application/ports/part.repository';
+import type { PartRepository } from 'src/domain/repositories/part.repository';
 import { Inject, Injectable } from '@nestjs/common';
 
 interface UpdatePartInput {

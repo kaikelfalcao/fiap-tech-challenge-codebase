@@ -2,6 +2,7 @@ import {
   ArgumentsHost,
   Catch,
   ExceptionFilter,
+  HttpException,
   HttpStatus,
 } from '@nestjs/common';
 import { Response } from 'express';
@@ -13,7 +14,6 @@ export class GlobalExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
     const res = host.switchToHttp().getResponse<Response>();
 
-    console.log(exception);
     if (exception instanceof DomainError) {
       const status = ERROR_STATUS_MAP[exception.code] ?? HttpStatus.BAD_REQUEST;
 
@@ -24,6 +24,21 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         },
       });
     }
+
+    if (exception instanceof HttpException) {
+      const status = exception.getStatus();
+      const response = exception.getResponse();
+
+      return res
+        .status(status)
+        .json(
+          typeof response === 'string'
+            ? { error: { message: response } }
+            : response,
+        );
+    }
+
+    console.log(exception);
 
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
       error: {

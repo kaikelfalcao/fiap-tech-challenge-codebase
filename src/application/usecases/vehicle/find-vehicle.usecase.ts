@@ -1,8 +1,8 @@
 import { Vehicle } from 'src/domain/entities/vehicle.entity';
 import { UseCase } from '../../base.usecase';
-import type { VehicleRepository } from '../../ports/vehicle.repository';
 import { Plate } from 'src/domain/value-objects/plate.vo';
 import { Inject, Injectable } from '@nestjs/common';
+import type { VehicleRepository } from 'src/domain/repositories/vehicle.repository';
 
 interface FindVehicleInput {
   id?: string;

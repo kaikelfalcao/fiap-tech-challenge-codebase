@@ -1,4 +1,4 @@
-import type { ServiceOrderRepository } from 'src/application/ports/service-order-repository';
+import type { ServiceOrderRepository } from 'src/domain/repositories/service-order.repository';
 import { ServiceOrder } from 'src/domain/entities/service-order.entity';
 import { FindCustomerUseCase } from '../customer/find-customer.usecase';
 import { FindVehicleUseCase } from '../vehicle/find-vehicle.usecase';

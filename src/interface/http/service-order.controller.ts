@@ -8,6 +8,7 @@ import {
   NotFoundException,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateServiceOrderUseCase } from 'src/application/usecases/service-order/create-service-order.usecase';
 import type { CreateServiceOrderDto } from './dtos/create-service-order.dto';
@@ -20,6 +21,7 @@ import { FindServiceOrderUseCase } from 'src/application/usecases/service-order/
 import { FindAllServiceOrderUseCase } from 'src/application/usecases/service-order/find-all-service-order.usecase';
 import { DeleteServiceOrderUseCase } from 'src/application/usecases/service-order/delete-service-order.usecase';
 import { FindByCustomerAndVehicleServiceOrderUseCase } from 'src/application/usecases/service-order/find-by-customer-and-vehicle-service-order.usecase';
+import { JwtAuthGuard } from 'src/infra/auth/jwt.guard';
 
 @Controller('service-orders')
 export class ServiceOrderController {
@@ -34,6 +36,7 @@ export class ServiceOrderController {
   ) {}
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   async findAll() {
     return (await this.findAllUseCase.execute()).map((order) =>
       ServiceOrderPresenter.toResponse(order),
@@ -54,6 +57,7 @@ export class ServiceOrderController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   async findById(@Param('id') id: string) {
     const order = await this.findUseCase.execute({ id });
     if (!order) {
@@ -63,18 +67,21 @@ export class ServiceOrderController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   async create(@Body() body: CreateServiceOrderDto) {
     const result = await this.createUseCase.execute(body);
     return ServiceOrderPresenter.toResponse(result);
   }
 
   @Patch()
+  @UseGuards(JwtAuthGuard)
   async update(@Body() body: UpdateServiceOrderDto) {
     const { updatedOrder } = await this.updateUseCase.execute(body);
     return ServiceOrderPresenter.toResponse(updatedOrder);
   }
 
   @Patch('status')
+  @UseGuards(JwtAuthGuard)
   async updateStatus(@Body() body: UpdateServiceOrderStatusDto) {
     const { updatedOrderId } = await this.updateStatusUseCase.execute(body);
     const updatedOrder = await this.findUseCase.execute({ id: updatedOrderId });
@@ -82,6 +89,7 @@ export class ServiceOrderController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   async deleteOne(@Param('id') id: string) {
     await this.deleteUseCase.execute({ id: id });
   }

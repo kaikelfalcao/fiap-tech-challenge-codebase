@@ -9,6 +9,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateVehicleUseCase } from 'src/application/usecases/vehicle/create-vehicle.usecase';
 import { UpdateVehicleUseCase } from 'src/application/usecases/vehicle/update-vehicle.usecase';
@@ -19,6 +20,7 @@ import { VehicleResponseDto } from './dtos/vehicle-response.dto';
 import { VehiclePresenter } from '../presenters/vehicle.presenter';
 import { CreateVehicleDto } from './dtos/create-vehicle.dto';
 import { UpdateVehicleDto } from './dtos/update-vehicle.dto';
+import { JwtAuthGuard } from 'src/infra/auth/jwt.guard';
 
 @Controller('vehicles')
 export class VehicleController {
@@ -31,12 +33,14 @@ export class VehicleController {
   ) {}
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   async findAll(): Promise<VehicleResponseDto[]> {
     const vehicles = await this.findAllVehiclesUseCase.execute();
     return vehicles.map(VehiclePresenter.toResponse);
   }
 
   @Get('search')
+  @UseGuards(JwtAuthGuard)
   async find(@Query('id') id?: string, @Query('plate') plate?: string) {
     if (!id && !plate) {
       throw new BadRequestException('id or plate must be provided');
@@ -52,6 +56,7 @@ export class VehicleController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   async findById(@Param('id') id: string) {
     const vehicle = await this.findVehicleUseCase.execute({ id });
 
@@ -63,12 +68,14 @@ export class VehicleController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   async create(@Body() body: CreateVehicleDto): Promise<VehicleResponseDto> {
     const vehicle = await this.createVehicleUseCase.execute(body);
     return VehiclePresenter.toResponse(vehicle);
   }
 
   @Put(':id')
+  @UseGuards(JwtAuthGuard)
   async update(
     @Param('id') id: string,
     @Body() body: UpdateVehicleDto,
@@ -88,6 +95,7 @@ export class VehicleController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   async delete(@Param('id') id: string): Promise<void> {
     await this.deleteVehicleUseCase.execute({ id });
   }

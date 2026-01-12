@@ -1,5 +1,5 @@
 import { Repair } from 'src/domain/entities/repair.entity';
-import type { RepairRepository } from 'src/application/ports/repair.repository';
+import type { RepairRepository } from 'src/domain/repositories/repair.repository';
 import { CreateRepairUseCase } from '../repair/create-repair.usecase';
 import { UpdateRepairUseCase } from '../repair/update-repair.usecase';
 import { DeleteRepairUseCase } from '../repair/delete-repair.usecase';

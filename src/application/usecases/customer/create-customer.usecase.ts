@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from 'src/application/base.usecase';
-import type { CustomerRepository } from 'src/application/ports/customer.repository';
 import { Customer } from 'src/domain/entities/customer.entity';
 
 import { CustomerAlreadyExistsError } from 'src/domain/errors/customer-already-exists.error';
+import type { CustomerRepository } from 'src/domain/repositories/customer.repository';
 
 interface CreateCustomerInput {
   name: string;

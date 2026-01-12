@@ -1,6 +1,6 @@
 import { Customer } from 'src/domain/entities/customer.entity';
 import { CustomerAlreadyExistsError } from 'src/domain/errors/customer-already-exists.error';
-import { CustomerRepository } from 'src/application/ports/customer.repository';
+import { CustomerRepository } from 'src/domain/repositories/customer.repository';
 import { CreateCustomerUseCase } from '../customer/create-customer.usecase';
 import { UpdateCustomerUseCase } from '../customer/update-customer.usecase';
 import { FindCustomerUseCase } from '../customer/find-customer.usecase';

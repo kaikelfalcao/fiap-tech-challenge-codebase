@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { PartRepository } from 'src/application/ports/part.repository';
+import type { PartRepository } from 'src/domain/repositories/part.repository';
 
 export interface ReturnPartInput {
   partId: string;

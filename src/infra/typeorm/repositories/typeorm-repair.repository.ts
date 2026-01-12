@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { Repair } from 'src/domain/entities/repair.entity';
 import { RepairOrm } from '../entities/repair.orm';
 import { RepairMapper } from '../mappers/repair.mapper';
-import type { RepairRepository } from 'src/application/ports/repair.repository';
+import type { RepairRepository } from 'src/domain/repositories/repair.repository';
 
 @Injectable()
 export class TypeOrmRepairRepository implements RepairRepository {

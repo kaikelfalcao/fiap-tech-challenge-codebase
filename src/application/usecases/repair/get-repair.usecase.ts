@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { RepairRepository } from 'src/application/ports/repair.repository';
+import type { RepairRepository } from 'src/domain/repositories/repair.repository';
 
 export interface GetRepairInput {
   repairId: string;

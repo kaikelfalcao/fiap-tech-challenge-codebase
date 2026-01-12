@@ -1,4 +1,4 @@
-import { ServiceOrderRepository } from 'src/application/ports/service-order-repository';
+import { ServiceOrderRepository } from 'src/domain/repositories/service-order-repository';
 import { ServiceOrder } from 'src/domain/entities/service-order.entity';
 import { CustomerNotFound } from 'src/domain/errors/customer-not-found.error';
 import { VehicleNotFound } from 'src/domain/errors/vehicle-not-found.error';

@@ -4,7 +4,7 @@ import { DeleteVehicleUseCase } from '../vehicle/delete-vehicle.usecase';
 import { UpdateVehicleUseCase } from '../vehicle/update-vehicle.usecase';
 import { FindVehicleUseCase } from '../vehicle/find-vehicle.usecase';
 import { FindAllVehiclesUseCase } from '../vehicle/find-all-vehicles.usecase';
-import type { VehicleRepository } from 'src/application/ports/vehicle.repository';
+import type { VehicleRepository } from 'src/domain/repositories/vehicle.repository';
 
 function makeVehicleRepository(): jest.Mocked<VehicleRepository> {
   return {

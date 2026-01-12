@@ -3,7 +3,7 @@ import { CustomerOrm } from '../entities/customer.orm';
 import { CustomerMapper } from '../mappers/customer.mapper';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CustomerRepository } from 'src/application/ports/customer.repository';
+import { CustomerRepository } from 'src/domain/repositories/customer.repository';
 
 export class TypeOrmCustomerRepository implements CustomerRepository {
   constructor(

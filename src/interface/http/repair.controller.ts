@@ -6,6 +6,7 @@ import {
   Delete,
   Param,
   Body,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateRepairUseCase } from 'src/application/usecases/repair/create-repair.usecase';
 import { DeleteRepairUseCase } from 'src/application/usecases/repair/delete-repair.usecase';
@@ -13,6 +14,7 @@ import { FindAllRepairsUseCase } from 'src/application/usecases/repair/find-all-
 import { FindRepairUseCase } from 'src/application/usecases/repair/find-repair.usecase';
 import { UpdateRepairUseCase } from 'src/application/usecases/repair/update-repair.usecase';
 import { Repair } from 'src/domain/entities/repair.entity';
+import { JwtAuthGuard } from 'src/infra/auth/jwt.guard';
 
 @Controller('repairs')
 export class RepairController {
@@ -25,6 +27,7 @@ export class RepairController {
   ) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   async create(
     @Body() body: { description: string; cost: number },
   ): Promise<Repair> {
@@ -32,6 +35,7 @@ export class RepairController {
   }
 
   @Put(':id')
+  @UseGuards(JwtAuthGuard)
   async update(
     @Param('id') id: string,
     @Body() body: { description?: string; cost?: number },
@@ -40,16 +44,19 @@ export class RepairController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   async delete(@Param('id') id: string): Promise<void> {
     return this.deleteUseCase.execute({ id });
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   async find(@Param('id') id: string): Promise<Repair | null> {
     return this.findUseCase.execute({ id });
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   async findAll(): Promise<Repair[]> {
     return this.findAllUseCase.execute();
   }

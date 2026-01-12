@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { PartRepository } from 'src/application/ports/part.repository';
 import { Part } from 'src/domain/entities/part.entity';
 import { PartOrm } from '../entities/part.orm';
 import { PartMapper } from '../mappers/part.mapper';
+import { PartRepository } from 'src/domain/repositories/part.repository';
 
 @Injectable()
 export class TypeOrmPartRepository implements PartRepository {

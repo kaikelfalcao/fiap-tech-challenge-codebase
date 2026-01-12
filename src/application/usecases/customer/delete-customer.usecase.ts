@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from 'src/application/base.usecase';
-import type { CustomerRepository } from 'src/application/ports/customer.repository';
 import { FindCustomerUseCase } from './find-customer.usecase';
+import type { CustomerRepository } from 'src/domain/repositories/customer.repository';
 
 interface DeleteCustomerInput {
   id: string;

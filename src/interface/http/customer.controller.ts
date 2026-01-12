@@ -9,6 +9,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 
 import { CreateCustomerDto } from './dtos/create-customer.dto';
@@ -20,6 +21,7 @@ import { FindCustomerUseCase } from 'src/application/usecases/customer/find-cust
 import { UpdateCustomerUseCase } from 'src/application/usecases/customer/update-customer.usecase';
 import { DeleteCustomerUseCase } from 'src/application/usecases/customer/delete-customer.usecase';
 import { FindAllCustomersUseCase } from 'src/application/usecases/customer/find-all-customers.usecase';
+import { JwtAuthGuard } from 'src/infra/auth/jwt.guard';
 
 @Controller('customers')
 export class CustomerController {
@@ -32,6 +34,7 @@ export class CustomerController {
   ) {}
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   async findAll(): Promise<CustomerResponseDto[]> {
     const customers = await this.findAllCustomerUseCase.execute();
 
@@ -39,6 +42,7 @@ export class CustomerController {
   }
 
   @Get('search')
+  @UseGuards(JwtAuthGuard)
   async find(
     @Query('email') email?: string,
     @Query('registrationNumber') registrationNumber?: string,
@@ -62,6 +66,7 @@ export class CustomerController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   async findById(@Param('id') id: string) {
     const customer = await this.findCustomerUseCase.execute({ id });
 
@@ -73,12 +78,14 @@ export class CustomerController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   async create(@Body() body: CreateCustomerDto): Promise<CustomerResponseDto> {
     const result = await this.createCustomer.execute(body);
     return CustomerPresenter.toResponse(result);
   }
 
   @Put(':id')
+  @UseGuards(JwtAuthGuard)
   async update(
     @Param('id') id: string,
     @Body() body: UpdateCustomerDto,
@@ -98,6 +105,7 @@ export class CustomerController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   async delete(@Param('id') id: string): Promise<void> {
     await this.deleteCustomerUseCase.execute({ id });
   }

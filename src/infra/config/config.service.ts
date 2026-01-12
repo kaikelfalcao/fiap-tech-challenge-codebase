@@ -38,6 +38,13 @@ export class ConfigService {
     };
   }
 
+  get jwt() {
+    return {
+      secret: this.env.JWT_SECRET,
+      expiresIn: this.env.JWT_EXPIRES_IN,
+    };
+  }
+
   isProduction() {
     return this.env.NODE_ENV === 'production';
   }

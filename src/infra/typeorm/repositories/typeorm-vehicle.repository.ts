@@ -1,7 +1,7 @@
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { VehicleOrm } from '../entities/vehicle.orm';
-import { VehicleRepository } from 'src/application/ports/vehicle.repository';
+import { VehicleRepository } from 'src/domain/repositories/vehicle.repository';
 import { Vehicle } from 'src/domain/entities/vehicle.entity';
 import { VehicleMapper } from '../mappers/vehicle.mapper';
 

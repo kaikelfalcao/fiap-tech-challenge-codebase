@@ -1,4 +1,4 @@
-import { Vehicle } from '../../domain/entities/vehicle.entity';
+import { Vehicle } from '../entities/vehicle.entity';
 
 export interface VehicleRepository {
   save(vehicle: Vehicle): Promise<void>;

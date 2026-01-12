@@ -3,7 +3,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ServiceOrderOrm } from '../entities/service-order.orm';
 import { ServiceOrder } from 'src/domain/entities/service-order.entity';
-import { ServiceOrderRepository } from 'src/application/ports/service-order-repository';
+import { ServiceOrderRepository } from 'src/domain/repositories/service-order.repository';
 import { ServiceOrderMapper } from '../mappers/service-order.mapper';
 
 @Injectable()

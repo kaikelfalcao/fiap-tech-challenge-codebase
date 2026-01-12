@@ -6,6 +6,7 @@ import { VehicleModule } from './infra/nestjs/modules/vehicle.module';
 import { PartModule } from './infra/nestjs/modules/part.module';
 import { RepairModule } from './infra/nestjs/modules/repair.module';
 import { ServiceOrderModule } from './infra/nestjs/modules/service-order.module';
+import { AuthModule } from './infra/auth/auth.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ServiceOrderModule } from './infra/nestjs/modules/service-order.module'
     PartModule,
     RepairModule,
     ServiceOrderModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

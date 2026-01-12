@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { ServiceOrderRepository } from 'src/application/ports/service-order-repository';
+import type { ServiceOrderRepository } from 'src/domain/repositories/service-order.repository';
 import { ServiceOrderStatus } from 'src/domain/enums/service-order-status.enum';
 
 export interface UpdateStatusInput {

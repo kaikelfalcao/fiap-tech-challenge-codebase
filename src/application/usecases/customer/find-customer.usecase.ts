@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from 'src/application/base.usecase';
 import type { CustomerRepository } from 'src/application/ports/customer.repository';
 import { Customer } from 'src/domain/entities/customer.entity';
+import { CustomerNotFound } from 'src/domain/errors/customer-not-found.error';
 import { Email } from 'src/domain/value-objects/email.vo';
 import { RegistrationNumber } from 'src/domain/value-objects/registration-number.vo';
 
@@ -14,14 +15,14 @@ interface FindCustomerInput {
 @Injectable()
 export class FindCustomerUseCase implements UseCase<
   FindCustomerInput,
-  Customer | null
+  Customer
 > {
   constructor(
     @Inject('CustomerRepository')
     private readonly repository: CustomerRepository,
   ) {}
 
-  async execute(input: FindCustomerInput): Promise<Customer | null> {
+  async execute(input: FindCustomerInput): Promise<Customer> {
     if (!input.id && !input.email && !input.registrationNumber) {
       throw new Error('At least one identifier must be provided');
     }
@@ -53,6 +54,6 @@ export class FindCustomerUseCase implements UseCase<
       }
     }
 
-    return null;
+    throw new CustomerNotFound();
   }
 }

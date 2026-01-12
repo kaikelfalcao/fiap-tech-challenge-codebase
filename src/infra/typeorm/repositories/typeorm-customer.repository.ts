@@ -1,9 +1,9 @@
-import { CustomerRepository } from 'src/application/ports/customer.repository';
-import { Repository } from 'typeorm';
-import { CustomerOrm } from '../entities/customer.orm';
 import { Customer } from 'src/domain/entities/customer.entity';
-import { InjectRepository } from '@nestjs/typeorm';
+import { CustomerOrm } from '../entities/customer.orm';
 import { CustomerMapper } from '../mappers/customer.mapper';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CustomerRepository } from 'src/application/ports/customer.repository';
 
 export class TypeOrmCustomerRepository implements CustomerRepository {
   constructor(
@@ -12,62 +12,40 @@ export class TypeOrmCustomerRepository implements CustomerRepository {
   ) {}
 
   async save(customer: Customer): Promise<void> {
-    const orm = this.repo.create({
-      id: customer.id,
-      name: customer.name,
-      email: customer.email.value,
-      registrationNumber: customer.registrationNumber.value,
-    });
+    await this.repo.save(
+      this.repo.create({
+        id: customer.id,
+        name: customer.name,
+        email: customer.email.value,
+        registrationNumber: customer.registrationNumber.value,
+      }),
+    );
+  }
 
-    const saved = await this.repo.save(orm);
-    customer.id = saved.id;
-    customer.createdAt = orm.createdAt;
-    customer.updatedAt = orm.updatedAt;
+  async findById(id: string): Promise<Customer | null> {
+    return this.findOne({ id });
   }
 
   async findByEmail(email: string): Promise<Customer | null> {
-    const found = await this.repo.findOneBy({ email: email });
-
-    if (!found) {
-      return null;
-    }
-
-    return CustomerMapper.toDomain(found);
+    return this.findOne({ email });
   }
 
   async findByRegistrationNumber(
     registrationNumber: string,
   ): Promise<Customer | null> {
-    const found = await this.repo.findOneBy({
-      registrationNumber: registrationNumber,
-    });
-
-    if (!found) {
-      return null;
-    }
-
-    return CustomerMapper.toDomain(found);
-  }
-
-  async findById(id: string): Promise<Customer | null> {
-    const found = await this.repo.findOneBy({
-      id: id,
-    });
-
-    if (!found) {
-      return null;
-    }
-
-    return CustomerMapper.toDomain(found);
+    return this.findOne({ registrationNumber });
   }
 
   async findAll(): Promise<Customer[]> {
-    return (await this.repo.find()).map((customer) =>
-      CustomerMapper.toDomain(customer),
-    );
+    return (await this.repo.find()).map(CustomerMapper.toDomain);
   }
 
-  async delete(id: string) {
-    await this.repo.delete({ id: id });
+  async delete(id: string): Promise<void> {
+    await this.repo.delete(id);
+  }
+
+  private async findOne(where: Partial<CustomerOrm>): Promise<Customer | null> {
+    const found = await this.repo.findOneBy(where);
+    return found ? CustomerMapper.toDomain(found) : null;
   }
 }

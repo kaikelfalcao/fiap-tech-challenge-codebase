@@ -79,7 +79,10 @@ describe('Customer UseCases', () => {
       const repo = makeCustomerRepository();
       repo.findById.mockResolvedValue(customer);
 
-      const useCase = new UpdateCustomerUseCase(repo);
+      const useCase = new UpdateCustomerUseCase(
+        repo,
+        new FindCustomerUseCase(repo),
+      );
       const result = await useCase.execute({
         id: 'customer-id-1',
         name: 'Jane Doe',
@@ -93,7 +96,10 @@ describe('Customer UseCases', () => {
       const repo = makeCustomerRepository();
       repo.findById.mockResolvedValue(customer);
 
-      const useCase = new UpdateCustomerUseCase(repo);
+      const useCase = new UpdateCustomerUseCase(
+        repo,
+        new FindCustomerUseCase(repo),
+      );
       const result = await useCase.execute({
         id: 'customer-id-1',
         email: 'jane.doe@email.com',
@@ -107,7 +113,10 @@ describe('Customer UseCases', () => {
       const repo = makeCustomerRepository();
       repo.findById.mockResolvedValue(null);
 
-      const useCase = new UpdateCustomerUseCase(repo);
+      const useCase = new UpdateCustomerUseCase(
+        repo,
+        new FindCustomerUseCase(repo),
+      );
       await expect(
         useCase.execute({ id: 'invalid-id', name: 'Jane Doe' }),
       ).rejects.toThrow('Customer not found');
@@ -119,7 +128,10 @@ describe('Customer UseCases', () => {
       const repo = makeCustomerRepository();
       repo.findById.mockResolvedValue(customer);
 
-      const useCase = new UpdateCustomerUseCase(repo);
+      const useCase = new UpdateCustomerUseCase(
+        repo,
+        new FindCustomerUseCase(repo),
+      );
       await expect(
         useCase.execute({ id: 'customer-id-1', name: 'J' }),
       ).rejects.toThrow('Invalid customer name');
@@ -176,18 +188,6 @@ describe('Customer UseCases', () => {
       expect(repo.findByRegistrationNumber).toHaveBeenCalledWith('52998224725');
     });
 
-    it('should return null when customer is not found', async () => {
-      const repo = makeCustomerRepository();
-      repo.findById.mockResolvedValue(null);
-      repo.findByEmail.mockResolvedValue(null);
-      repo.findByRegistrationNumber.mockResolvedValue(null);
-
-      const useCase = new FindCustomerUseCase(repo);
-      const result = await useCase.execute({ email: 'not-found@email.com' });
-
-      expect(result).toBeNull();
-    });
-
     it('should throw error when no search criteria is provided', async () => {
       const repo = makeCustomerRepository();
       const useCase = new FindCustomerUseCase(repo);
@@ -203,7 +203,10 @@ describe('Customer UseCases', () => {
       const repo = makeCustomerRepository();
       repo.findById.mockResolvedValue({ id: 'customer-id-1' } as Customer);
 
-      const useCase = new DeleteCustomerUseCase(repo);
+      const useCase = new DeleteCustomerUseCase(
+        repo,
+        new FindCustomerUseCase(repo),
+      );
       await useCase.execute({ id: 'customer-id-1' });
 
       expect(repo.findById).toHaveBeenCalledWith('customer-id-1');
@@ -214,7 +217,10 @@ describe('Customer UseCases', () => {
       const repo = makeCustomerRepository();
       repo.findById.mockResolvedValue(null);
 
-      const useCase = new DeleteCustomerUseCase(repo);
+      const useCase = new DeleteCustomerUseCase(
+        repo,
+        new FindCustomerUseCase(repo),
+      );
       await expect(useCase.execute({ id: 'invalid-id' })).rejects.toThrow(
         'Customer not found',
       );

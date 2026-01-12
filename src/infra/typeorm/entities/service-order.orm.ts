@@ -62,13 +62,11 @@ export class ServiceOrderOrm {
 
   @OneToMany(() => PartsOnServiceOrdersOrm, (part) => part.serviceOrder, {
     cascade: true,
-    onDelete: 'CASCADE',
   })
   parts: PartsOnServiceOrdersOrm[];
 
   @OneToMany(() => RepairsOnServiceOrdersOrm, (repair) => repair.serviceOrder, {
     cascade: true,
-    onDelete: 'CASCADE',
   })
   repairs: RepairsOnServiceOrdersOrm[];
 

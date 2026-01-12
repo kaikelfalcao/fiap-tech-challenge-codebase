@@ -19,6 +19,7 @@ import { UpdateServiceOrderStatusUseCase } from 'src/application/usecases/servic
 import { FindServiceOrderUseCase } from 'src/application/usecases/service-order/find-service-order.usecase';
 import { FindAllServiceOrderUseCase } from 'src/application/usecases/service-order/find-all-service-order.usecase';
 import { DeleteServiceOrderUseCase } from 'src/application/usecases/service-order/delete-service-order.usecase';
+import { FindByCustomerAndVehicleServiceOrderUseCase } from 'src/application/usecases/service-order/find-by-customer-and-vehicle-service-order.usecase';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { DeleteServiceOrderUseCase } from 'src/application/usecases/service-orde
     FindServiceOrderUseCase,
     FindAllServiceOrderUseCase,
     DeleteServiceOrderUseCase,
+    FindByCustomerAndVehicleServiceOrderUseCase,
   ],
 })
 export class ServiceOrderModule {}

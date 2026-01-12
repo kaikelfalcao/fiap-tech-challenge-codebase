@@ -7,6 +7,7 @@ import {
   Param,
   NotFoundException,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { CreateServiceOrderUseCase } from 'src/application/usecases/service-order/create-service-order.usecase';
 import type { CreateServiceOrderDto } from './dtos/create-service-order.dto';
@@ -18,6 +19,7 @@ import { UpdateServiceOrderStatusUseCase } from 'src/application/usecases/servic
 import { FindServiceOrderUseCase } from 'src/application/usecases/service-order/find-service-order.usecase';
 import { FindAllServiceOrderUseCase } from 'src/application/usecases/service-order/find-all-service-order.usecase';
 import { DeleteServiceOrderUseCase } from 'src/application/usecases/service-order/delete-service-order.usecase';
+import { FindByCustomerAndVehicleServiceOrderUseCase } from 'src/application/usecases/service-order/find-by-customer-and-vehicle-service-order.usecase';
 
 @Controller('service-orders')
 export class ServiceOrderController {
@@ -28,12 +30,26 @@ export class ServiceOrderController {
     private readonly findUseCase: FindServiceOrderUseCase,
     private readonly findAllUseCase: FindAllServiceOrderUseCase,
     private readonly deleteUseCase: DeleteServiceOrderUseCase,
+    private readonly findByCustomerAndVehicleUseCase: FindByCustomerAndVehicleServiceOrderUseCase,
   ) {}
 
   @Get()
   async findAll() {
     return (await this.findAllUseCase.execute()).map((order) =>
       ServiceOrderPresenter.toResponse(order),
+    );
+  }
+
+  @Get('/lookup')
+  async findByCustomerAndVehicle(
+    @Query('customerRegistrationNumber') customerRegistrationNumber: string,
+    @Query('vehiclePlate') vehiclePlate: string,
+  ) {
+    return ServiceOrderPresenter.toResponse(
+      await this.findByCustomerAndVehicleUseCase.execute({
+        registrationNumber: customerRegistrationNumber,
+        plate: vehiclePlate,
+      }),
     );
   }
 

@@ -35,6 +35,21 @@ export class TypeOrmServiceOrderRepository implements ServiceOrderRepository {
     return ServiceOrderMapper.toEntity(orm);
   }
 
+  async findByCustomerAndVehicle(
+    customerId: string,
+    vehicleId: string,
+  ): Promise<ServiceOrder> {
+    const orm = await this.repo.findOne({
+      where: { customerId: customerId, vehicleId: vehicleId },
+      relations: ['parts', 'repairs'],
+    });
+
+    if (!orm) {
+      throw new Error('Not Found Service Order');
+    }
+    return ServiceOrderMapper.toEntity(orm);
+  }
+
   async findAll(): Promise<ServiceOrder[]> {
     const orms = await this.repo.find({ relations: ['parts', 'repairs'] });
     return orms.map(ServiceOrderMapper.toEntity);

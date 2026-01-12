@@ -1,11 +1,12 @@
-// infra/typeorm/entities/customer.orm.ts
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { VehicleOrm } from './vehicle.orm';
 
 @Entity('customers')
 export class CustomerOrm {
@@ -26,4 +27,7 @@ export class CustomerOrm {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => VehicleOrm, (vehicle) => vehicle.customer, { cascade: true })
+  vehicles: VehicleOrm[];
 }

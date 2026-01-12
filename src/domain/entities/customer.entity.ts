@@ -1,9 +1,13 @@
 import { RegistrationNumber } from './../value-objects/registration-number.vo';
 import { Email } from '../value-objects/email.vo';
+import { Vehicle } from './vehicle.entity';
+import { randomUUID } from 'crypto';
 
 export class Customer {
+  private vehicles: Vehicle[] = [];
+
   protected constructor(
-    public id: string | undefined,
+    public id: string,
     public name: string,
     public email: Email,
     public registrationNumber: RegistrationNumber,
@@ -24,7 +28,7 @@ export class Customer {
     }
 
     return new Customer(
-      id,
+      id ?? randomUUID(),
       name,
       Email.create(email),
       RegistrationNumber.create(registrationNumber),
@@ -48,5 +52,20 @@ export class Customer {
   changeRegistrationNumber(number: string) {
     const registrationNumberVO = RegistrationNumber.create(number);
     this.registrationNumber = registrationNumberVO;
+  }
+
+  addVehicle(vehicle: Vehicle) {
+    if (vehicle.customerId !== this.id) {
+      throw new Error('Vehicle does not belong to this customer');
+    }
+    this.vehicles.push(vehicle);
+  }
+
+  removeVehicle(vehicleId: string) {
+    this.vehicles = this.vehicles.filter((v) => v.id !== vehicleId);
+  }
+
+  getVehicles(): Vehicle[] {
+    return this.vehicles;
   }
 }

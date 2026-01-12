@@ -1,0 +1,20 @@
+meta {
+  name: FIND BY ID
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{API_URL}}/vehicles/:id
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: 149832bf-68f8-47d2-b031-6c8aeeca58ea
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

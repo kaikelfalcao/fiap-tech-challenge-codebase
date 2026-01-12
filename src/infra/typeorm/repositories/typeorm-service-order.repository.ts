@@ -5,6 +5,7 @@ import { ServiceOrderOrm } from '../entities/service-order.orm';
 import { ServiceOrder } from 'src/domain/entities/service-order.entity';
 import { ServiceOrderRepository } from 'src/domain/repositories/service-order.repository';
 import { ServiceOrderMapper } from '../mappers/service-order.mapper';
+import { ServiceOrderStatus } from 'src/domain/enums/service-order-status.enum';
 
 @Injectable()
 export class TypeOrmServiceOrderRepository implements ServiceOrderRepository {
@@ -23,16 +24,13 @@ export class TypeOrmServiceOrderRepository implements ServiceOrderRepository {
     await this.repo.save(orm);
   }
 
-  async findById(id: string): Promise<ServiceOrder> {
+  async findById(id: string): Promise<ServiceOrder | null> {
     const orm = await this.repo.findOne({
       where: { id },
       relations: ['parts', 'repairs'],
     });
 
-    if (!orm) {
-      throw new Error('Not Found Service Order');
-    }
-    return ServiceOrderMapper.toEntity(orm);
+    return orm ? ServiceOrderMapper.toEntity(orm) : null;
   }
 
   async findByCustomerAndVehicle(
@@ -51,7 +49,37 @@ export class TypeOrmServiceOrderRepository implements ServiceOrderRepository {
   }
 
   async findAll(): Promise<ServiceOrder[]> {
-    const orms = await this.repo.find({ relations: ['parts', 'repairs'] });
+    const orms = await this.repo
+      .createQueryBuilder('os')
+      .leftJoinAndSelect('os.parts', 'parts')
+      .leftJoinAndSelect('os.repairs', 'repairs')
+      .where('os.status NOT IN (:...excluded)', {
+        excluded: [
+          ServiceOrderStatus.Finished,
+          ServiceOrderStatus.Delivered,
+          ServiceOrderStatus.Canceled,
+        ],
+      })
+      .orderBy(
+        `
+      CASE os.status
+        WHEN :inProgress THEN 1
+        WHEN :awaitingApproval THEN 2
+        WHEN :inDiagnosis THEN 3
+        WHEN :received THEN 4
+        ELSE 5
+      END
+      `,
+      )
+      .addOrderBy('os.createdAt', 'ASC')
+      .setParameters({
+        inProgress: ServiceOrderStatus.InProgress,
+        awaitingApproval: ServiceOrderStatus.AwaitingApproval,
+        inDiagnosis: ServiceOrderStatus.InDiagnosis,
+        received: ServiceOrderStatus.Received,
+      })
+      .getMany();
+
     return orms.map(ServiceOrderMapper.toEntity);
   }
 

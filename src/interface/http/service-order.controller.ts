@@ -56,6 +56,17 @@ export class ServiceOrderController {
     );
   }
 
+  @Get('status/:id')
+  @UseGuards(JwtAuthGuard)
+  async lookStatus(@Param('id') id: string) {
+    const order = await this.findUseCase.execute({ id });
+    if (!order) {
+      throw new NotFoundException(`Ordem de serviço ${id} não encontrada`);
+    }
+
+    return { status: order.status };
+  }
+
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   async findById(@Param('id') id: string) {

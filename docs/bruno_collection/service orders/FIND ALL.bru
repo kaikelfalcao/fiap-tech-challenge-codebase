@@ -1,0 +1,20 @@
+meta {
+  name: FIND ALL
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{API_URL}}/service-orders
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZmRjMDUzNi1mZGQ5LTQ3MGQtYTFjMS1jZTQzMzIxYjg2YTEiLCJ1c2VybmFtZSI6ImthaWtlIiwiaWF0IjoxNzY4MjQ5NTI5LCJleHAiOjE3NjgzMzU5Mjl9.b91BW3zPkZFXV-OTSRV6Lfwe2Bp9erkwvvlSYEXQdQk
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

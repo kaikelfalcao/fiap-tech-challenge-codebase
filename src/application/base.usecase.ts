@@ -1,3 +1,3 @@
-export abstract class UseCase<Input, Output> {
-  abstract execute(input: Input): Promise<Output> | Output;
+export interface UseCase<Input, Output> {
+  execute(input: Input): Promise<Output> | Output;
 }

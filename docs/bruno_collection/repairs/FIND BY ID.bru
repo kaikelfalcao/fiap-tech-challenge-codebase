@@ -1,0 +1,20 @@
+meta {
+  name: FIND BY ID
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{API_URL}}/repairs/:id
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: b495bd5a-4223-47e5-837a-10c522d779a9
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

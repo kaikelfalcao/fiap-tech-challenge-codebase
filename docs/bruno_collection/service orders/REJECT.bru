@@ -1,0 +1,20 @@
+meta {
+  name: REJECT
+  type: http
+  seq: 10
+}
+
+get {
+  url: {{API_URL}}/service-orders/:id/reject
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: ee975b2d-b5d6-471f-a89c-2e94d15f5e2f
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

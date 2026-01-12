@@ -1,0 +1,20 @@
+meta {
+  name: FIND ALL
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{API_URL}}/customers
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{TOKEN}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

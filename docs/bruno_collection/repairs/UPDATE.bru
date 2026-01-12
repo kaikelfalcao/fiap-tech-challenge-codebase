@@ -1,0 +1,28 @@
+meta {
+  name: UPDATE
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{API_URL}}/repairs/:id
+  body: json
+  auth: inherit
+}
+
+params:path {
+  id: b495bd5a-4223-47e5-837a-10c522d779a9
+}
+
+body:json {
+  {
+    "description": "Full Engine Oil Change",
+    "cost": 150.00
+  }
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

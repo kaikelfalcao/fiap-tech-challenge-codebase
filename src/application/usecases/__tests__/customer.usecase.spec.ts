@@ -1,10 +1,10 @@
 import { Customer } from 'src/domain/entities/customer.entity';
-import { CreateCustomerUseCase } from '../create-customer.usecase';
-import { UpdateCustomerUseCase } from '../update-customer.usecase';
-import { FindCustomerUseCase } from '../find-customer.usecase';
-import { DeleteCustomerUseCase } from '../delete-customer.usecase';
 import { CustomerAlreadyExistsError } from 'src/domain/errors/customer-already-exists.error';
 import { CustomerRepository } from 'src/application/ports/customer.repository';
+import { CreateCustomerUseCase } from '../customer/create-customer.usecase';
+import { UpdateCustomerUseCase } from '../customer/update-customer.usecase';
+import { FindCustomerUseCase } from '../customer/find-customer.usecase';
+import { DeleteCustomerUseCase } from '../customer/delete-customer.usecase';
 
 export const makeCustomerRepository = (): jest.Mocked<CustomerRepository> => ({
   findByEmail: jest.fn(),

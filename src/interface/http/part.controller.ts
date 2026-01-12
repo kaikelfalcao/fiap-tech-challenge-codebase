@@ -8,11 +8,11 @@ import {
   Delete,
   NotFoundException,
 } from '@nestjs/common';
-import { CreatePartUseCase } from 'src/application/usecases/create-part.usecase';
-import { UpdatePartUseCase } from 'src/application/usecases/update-part.usecase';
-import { DeletePartUseCase } from 'src/application/usecases/delete-part.usecase';
-import { FindPartUseCase } from 'src/application/usecases/find-part.usecase';
-import { FindAllPartsUseCase } from 'src/application/usecases/find-all-parts.usecase';
+import { CreatePartUseCase } from 'src/application/usecases/part/create-part.usecase';
+import { UpdatePartUseCase } from 'src/application/usecases/part/update-part.usecase';
+import { DeletePartUseCase } from 'src/application/usecases/part/delete-part.usecase';
+import { FindPartUseCase } from 'src/application/usecases/part/find-part.usecase';
+import { FindAllPartsUseCase } from 'src/application/usecases/part/find-all-parts.usecase';
 import { PartPresenter } from '../presenters/part.presenter';
 
 @Controller('parts')

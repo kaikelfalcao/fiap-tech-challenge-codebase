@@ -1,6 +1,7 @@
 import { Vehicle } from 'src/domain/entities/vehicle.entity';
-import { UseCase } from '../base.usecase';
-import { VehicleRepository } from '../ports/vehicle.repository';
+import { UseCase } from '../../base.usecase';
+import type { VehicleRepository } from '../../ports/vehicle.repository';
+import { Inject, Injectable } from '@nestjs/common';
 
 interface CreateVehicleInput {
   brand: string;
@@ -10,11 +11,14 @@ interface CreateVehicleInput {
   customerId: string;
 }
 
+@Injectable()
 export class CreateVehicleUseCase implements UseCase<
   CreateVehicleInput,
   Vehicle
 > {
-  constructor(private readonly repo: VehicleRepository) {}
+  constructor(
+    @Inject('VehicleRepository') private readonly repo: VehicleRepository,
+  ) {}
 
   async execute(input: CreateVehicleInput): Promise<Vehicle> {
     const vehicle = Vehicle.create(

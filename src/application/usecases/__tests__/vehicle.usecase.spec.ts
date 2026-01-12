@@ -1,9 +1,9 @@
 import { Vehicle } from 'src/domain/entities/vehicle.entity';
-import { CreateVehicleUseCase } from '../create-vehicle.usecase';
-import { DeleteVehicleUseCase } from '../delete-vehicle.usecase';
-import { UpdateVehicleUseCase } from '../update-vehicle.usecase';
-import { FindVehicleUseCase } from '../find-vehicle.usecase';
-import { FindAllVehiclesUseCase } from '../find-all-vehicles.usecase';
+import { CreateVehicleUseCase } from '../vehicle/create-vehicle.usecase';
+import { DeleteVehicleUseCase } from '../vehicle/delete-vehicle.usecase';
+import { UpdateVehicleUseCase } from '../vehicle/update-vehicle.usecase';
+import { FindVehicleUseCase } from '../vehicle/find-vehicle.usecase';
+import { FindAllVehiclesUseCase } from '../vehicle/find-all-vehicles.usecase';
 import type { VehicleRepository } from 'src/application/ports/vehicle.repository';
 
 function makeVehicleRepository(): jest.Mocked<VehicleRepository> {

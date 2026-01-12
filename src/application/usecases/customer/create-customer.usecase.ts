@@ -1,6 +1,8 @@
+import { Inject, Injectable } from '@nestjs/common';
+import { UseCase } from 'src/application/base.usecase';
+import type { CustomerRepository } from 'src/application/ports/customer.repository';
 import { Customer } from 'src/domain/entities/customer.entity';
-import { UseCase } from '../base.usecase';
-import { CustomerRepository } from '../ports/customer.repository';
+
 import { CustomerAlreadyExistsError } from 'src/domain/errors/customer-already-exists.error';
 
 interface CreateCustomerInput {
@@ -9,11 +11,14 @@ interface CreateCustomerInput {
   registrationNumber: string;
 }
 
+@Injectable()
 export class CreateCustomerUseCase implements UseCase<
   CreateCustomerInput,
   Customer
 > {
-  constructor(private readonly repo: CustomerRepository) {}
+  constructor(
+    @Inject('CustomerRepository') private readonly repo: CustomerRepository,
+  ) {}
 
   async execute(input: CreateCustomerInput): Promise<Customer> {
     const customer = Customer.create(

@@ -10,11 +10,11 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { CreateVehicleUseCase } from 'src/application/usecases/create-vehicle.usecase';
-import { UpdateVehicleUseCase } from 'src/application/usecases/update-vehicle.usecase';
-import { DeleteVehicleUseCase } from 'src/application/usecases/delete-vehicle.usecase';
-import { FindVehicleUseCase } from 'src/application/usecases/find-vehicle.usecase';
-import { FindAllVehiclesUseCase } from 'src/application/usecases/find-all-vehicles.usecase';
+import { CreateVehicleUseCase } from 'src/application/usecases/vehicle/create-vehicle.usecase';
+import { UpdateVehicleUseCase } from 'src/application/usecases/vehicle/update-vehicle.usecase';
+import { DeleteVehicleUseCase } from 'src/application/usecases/vehicle/delete-vehicle.usecase';
+import { FindVehicleUseCase } from 'src/application/usecases/vehicle/find-vehicle.usecase';
+import { FindAllVehiclesUseCase } from 'src/application/usecases/vehicle/find-all-vehicles.usecase';
 import { VehicleResponseDto } from './dtos/vehicle-response.dto';
 import { VehiclePresenter } from '../presenters/vehicle.presenter';
 import { CreateVehicleDto } from './dtos/create-vehicle.dto';

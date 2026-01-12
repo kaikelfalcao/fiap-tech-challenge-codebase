@@ -1,13 +1,15 @@
 import { Part } from 'src/domain/entities/part.entity';
-import { PartRepository } from 'src/application/ports/part.repository';
+import type { PartRepository } from 'src/application/ports/part.repository';
+import { Inject, Injectable } from '@nestjs/common';
 
 interface FindPartInput {
   id?: string;
   sku?: string;
 }
 
+@Injectable()
 export class FindPartUseCase {
-  constructor(private repo: PartRepository) {}
+  constructor(@Inject('PartRepository') private repo: PartRepository) {}
 
   async execute(input: FindPartInput): Promise<Part | null> {
     if (input.id) return this.repo.findById(input.id);

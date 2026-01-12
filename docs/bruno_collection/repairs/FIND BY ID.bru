@@ -1,17 +1,17 @@
 meta {
-  name: DELETE
+  name: FIND BY ID
   type: http
-  seq: 4
+  seq: 3
 }
 
-delete {
-  url: {{API_URL}}/vehicles/:id
+get {
+  url: {{API_URL}}/repairs/:id
   body: none
   auth: inherit
 }
 
 params:path {
-  id: 149832bf-68f8-47d2-b031-6c8aeeca58ea
+  id: b495bd5a-4223-47e5-837a-10c522d779a9
 }
 
 settings {

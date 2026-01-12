@@ -1,4 +1,3 @@
-import { FindAllCustomersUseCase } from './../../application/usecases/find-all-customers.usecase';
 import {
   BadRequestException,
   Body,
@@ -11,14 +10,16 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { CreateCustomerUseCase } from 'src/application/usecases/create-customer.usecase';
+
 import { CreateCustomerDto } from './dtos/create-customer.dto';
 import { CustomerResponseDto } from './dtos/customer-response.dto';
 import { CustomerPresenter } from '../presenters/customer.presenter';
-import { FindCustomerUseCase } from 'src/application/usecases/find-customer.usecase';
 import { UpdateCustomerDto } from './dtos/update-customer.dto';
-import { UpdateCustomerUseCase } from 'src/application/usecases/update-customer.usecase';
-import { DeleteCustomerUseCase } from 'src/application/usecases/delete-customer.usecase';
+import { CreateCustomerUseCase } from 'src/application/usecases/customer/create-customer.usecase';
+import { FindCustomerUseCase } from 'src/application/usecases/customer/find-customer.usecase';
+import { UpdateCustomerUseCase } from 'src/application/usecases/customer/update-customer.usecase';
+import { DeleteCustomerUseCase } from 'src/application/usecases/customer/delete-customer.usecase';
+import { FindAllCustomersUseCase } from 'src/application/usecases/customer/find-all-customers.usecase';
 
 @Controller('customers')
 export class CustomerController {

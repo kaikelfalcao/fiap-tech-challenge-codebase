@@ -1,7 +1,8 @@
 import { Vehicle } from 'src/domain/entities/vehicle.entity';
-import { UseCase } from '../base.usecase';
-import { VehicleRepository } from '../ports/vehicle.repository';
+import { UseCase } from '../../base.usecase';
+import type { VehicleRepository } from '../../ports/vehicle.repository';
 import { VehicleNotFound } from 'src/domain/errors/vehicle-not-found.error';
+import { Inject, Injectable } from '@nestjs/common';
 
 interface UpdateVehicleInput {
   id: string;
@@ -11,11 +12,14 @@ interface UpdateVehicleInput {
   plate?: string;
 }
 
+@Injectable()
 export class UpdateVehicleUseCase implements UseCase<
   UpdateVehicleInput,
   Vehicle
 > {
-  constructor(private readonly repo: VehicleRepository) {}
+  constructor(
+    @Inject('VehicleRepository') private readonly repo: VehicleRepository,
+  ) {}
 
   async execute(input: UpdateVehicleInput): Promise<Vehicle> {
     const vehicle = await this.repo.findById(input.id);

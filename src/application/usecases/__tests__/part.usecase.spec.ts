@@ -1,9 +1,9 @@
 import { Part } from 'src/domain/entities/part.entity';
-import { CreatePartUseCase } from '../create-part.usecase';
-import { DeletePartUseCase } from '../delete-part.usecase';
-import { UpdatePartUseCase } from '../update-part.usecase';
-import { FindPartUseCase } from '../find-part.usecase';
-import { FindAllPartsUseCase } from '../find-all-parts.usecase';
+import { CreatePartUseCase } from '../part/create-part.usecase';
+import { DeletePartUseCase } from '../part/delete-part.usecase';
+import { UpdatePartUseCase } from '../part/update-part.usecase';
+import { FindPartUseCase } from '../part/find-part.usecase';
+import { FindAllPartsUseCase } from '../part/find-all-parts.usecase';
 import { PartRepository } from 'src/application/ports/part.repository';
 
 export const makePartRepository = (): jest.Mocked<PartRepository> => ({

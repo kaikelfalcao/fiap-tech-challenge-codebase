@@ -1,18 +1,22 @@
 import { Vehicle } from 'src/domain/entities/vehicle.entity';
-import { UseCase } from '../base.usecase';
-import { VehicleRepository } from '../ports/vehicle.repository';
+import { UseCase } from '../../base.usecase';
+import type { VehicleRepository } from '../../ports/vehicle.repository';
 import { Plate } from 'src/domain/value-objects/plate.vo';
+import { Inject, Injectable } from '@nestjs/common';
 
 interface FindVehicleInput {
   id?: string;
   plate?: string;
 }
 
+@Injectable()
 export class FindVehicleUseCase implements UseCase<
   FindVehicleInput,
   Vehicle | null
 > {
-  constructor(private readonly repo: VehicleRepository) {}
+  constructor(
+    @Inject('VehicleRepository') private readonly repo: VehicleRepository,
+  ) {}
 
   async execute(input: FindVehicleInput): Promise<Vehicle | null> {
     if (!input.id && !input.plate) {

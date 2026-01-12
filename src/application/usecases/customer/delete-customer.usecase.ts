@@ -1,16 +1,21 @@
+import { Inject, Injectable } from '@nestjs/common';
+import { UseCase } from 'src/application/base.usecase';
+import type { CustomerRepository } from 'src/application/ports/customer.repository';
 import { CustomerNotFound } from 'src/domain/errors/customer-not-found.error';
-import { UseCase } from '../base.usecase';
-import { CustomerRepository } from '../ports/customer.repository';
 
 interface DeleteCustomerInput {
   id: string;
 }
 
+@Injectable()
 export class DeleteCustomerUseCase implements UseCase<
   DeleteCustomerInput,
   void
 > {
-  constructor(private readonly repo: CustomerRepository) {}
+  constructor(
+    @Inject('CustomerRepository')
+    private readonly repo: CustomerRepository,
+  ) {}
 
   async execute(input: DeleteCustomerInput): Promise<void> {
     const customer = await this.repo.findById(input.id);

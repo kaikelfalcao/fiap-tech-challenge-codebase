@@ -1,5 +1,6 @@
 import { Part } from 'src/domain/entities/part.entity';
-import { PartRepository } from 'src/application/ports/part.repository';
+import type { PartRepository } from 'src/application/ports/part.repository';
+import { Inject, Injectable } from '@nestjs/common';
 
 interface CreatePartInput {
   name: string;
@@ -8,8 +9,9 @@ interface CreatePartInput {
   quantity?: number;
 }
 
+@Injectable()
 export class CreatePartUseCase {
-  constructor(private repo: PartRepository) {}
+  constructor(@Inject('PartRepository') private repo: PartRepository) {}
 
   async execute(input: CreatePartInput): Promise<Part> {
     const existing = await this.repo.findBySku(input.sku);

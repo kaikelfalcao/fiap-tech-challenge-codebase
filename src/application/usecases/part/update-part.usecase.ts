@@ -1,5 +1,6 @@
 import { Part } from 'src/domain/entities/part.entity';
-import { PartRepository } from 'src/application/ports/part.repository';
+import type { PartRepository } from 'src/application/ports/part.repository';
+import { Inject, Injectable } from '@nestjs/common';
 
 interface UpdatePartInput {
   id: string;
@@ -9,8 +10,9 @@ interface UpdatePartInput {
   quantity?: number;
 }
 
+@Injectable()
 export class UpdatePartUseCase {
-  constructor(private repo: PartRepository) {}
+  constructor(@Inject('PartRepository') private repo: PartRepository) {}
 
   async execute(input: UpdatePartInput): Promise<Part> {
     const part = await this.repo.findById(input.id);

@@ -1,6 +1,7 @@
+import { Inject, Injectable } from '@nestjs/common';
+import { UseCase } from 'src/application/base.usecase';
+import type { CustomerRepository } from 'src/application/ports/customer.repository';
 import { Customer } from 'src/domain/entities/customer.entity';
-import { UseCase } from '../base.usecase';
-import { CustomerRepository } from '../ports/customer.repository';
 import { CustomerNotFound } from 'src/domain/errors/customer-not-found.error';
 
 interface UpdateCustomerInput {
@@ -10,11 +11,14 @@ interface UpdateCustomerInput {
   registrationNumber?: string;
 }
 
+@Injectable()
 export class UpdateCustomerUseCase implements UseCase<
   UpdateCustomerInput,
   Customer
 > {
-  constructor(private readonly repo: CustomerRepository) {}
+  constructor(
+    @Inject('CustomerRepository') private readonly repo: CustomerRepository,
+  ) {}
 
   async execute(input: UpdateCustomerInput): Promise<Customer> {
     const customer = await this.repo.findById(input.id);

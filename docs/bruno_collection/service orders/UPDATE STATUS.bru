@@ -7,13 +7,17 @@ meta {
 patch {
   url: {{API_URL}}/service-orders/status
   body: json
-  auth: inherit
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{TOKEN}}
 }
 
 body:json {
   {
-    "serviceOrderId": "b4b0a609-4123-4975-bc3c-65b9ccd22a0b",
-    "newStatus": "IN_DIAGNOSIS"
+    "serviceOrderId": "ee975b2d-b5d6-471f-a89c-2e94d15f5e2f",
+    "newStatus": "AWAITING_APPROVAL"
   }
   
 }

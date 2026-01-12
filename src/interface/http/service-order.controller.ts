@@ -1,3 +1,4 @@
+import { ApproveServiceOrderByEmailUseCase } from 'src/application/usecases/service-order/approve-service-order-by-email.usecase';
 import {
   Controller,
   Post,
@@ -33,6 +34,7 @@ export class ServiceOrderController {
     private readonly findAllUseCase: FindAllServiceOrderUseCase,
     private readonly deleteUseCase: DeleteServiceOrderUseCase,
     private readonly findByCustomerAndVehicleUseCase: FindByCustomerAndVehicleServiceOrderUseCase,
+    private readonly approveByEmailUseCase: ApproveServiceOrderByEmailUseCase,
   ) {}
 
   @Get()
@@ -103,5 +105,21 @@ export class ServiceOrderController {
   @UseGuards(JwtAuthGuard)
   async deleteOne(@Param('id') id: string) {
     await this.deleteUseCase.execute({ id: id });
+  }
+
+  @Get(':id/approve')
+  approve(@Param('id') id: string) {
+    return this.approveByEmailUseCase.execute({
+      serviceOrderId: id,
+      approved: true,
+    });
+  }
+
+  @Get(':id/reject')
+  reject(@Param('id') id: string) {
+    return this.approveByEmailUseCase.execute({
+      serviceOrderId: id,
+      approved: false,
+    });
   }
 }

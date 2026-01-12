@@ -20,6 +20,7 @@ import { FindServiceOrderUseCase } from 'src/application/usecases/service-order/
 import { FindAllServiceOrderUseCase } from 'src/application/usecases/service-order/find-all-service-order.usecase';
 import { DeleteServiceOrderUseCase } from 'src/application/usecases/service-order/delete-service-order.usecase';
 import { FindByCustomerAndVehicleServiceOrderUseCase } from 'src/application/usecases/service-order/find-by-customer-and-vehicle-service-order.usecase';
+import { ApproveServiceOrderByEmailUseCase } from 'src/application/usecases/service-order/approve-service-order-by-email.usecase';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { FindByCustomerAndVehicleServiceOrderUseCase } from 'src/application/use
     FindAllServiceOrderUseCase,
     DeleteServiceOrderUseCase,
     FindByCustomerAndVehicleServiceOrderUseCase,
+    ApproveServiceOrderByEmailUseCase,
   ],
 })
 export class ServiceOrderModule {}

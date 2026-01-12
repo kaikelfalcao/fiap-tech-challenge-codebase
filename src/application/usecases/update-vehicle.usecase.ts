@@ -1,6 +1,6 @@
 import { Vehicle } from 'src/domain/entities/vehicle.entity';
 import { UseCase } from '../base.usecase';
-import { VehicleRepository } from '../ports/vehicle-repository';
+import { VehicleRepository } from '../ports/vehicle.repository';
 import { VehicleNotFound } from 'src/domain/errors/vehicle-not-found.error';
 
 interface UpdateVehicleInput {

@@ -1,6 +1,6 @@
 import { Customer } from 'src/domain/entities/customer.entity';
 import { UseCase } from '../base.usecase';
-import { CustomerRepository } from '../ports/customer-repository';
+import { CustomerRepository } from '../ports/customer.repository';
 import { Email } from 'src/domain/value-objects/email.vo';
 import { RegistrationNumber } from 'src/domain/value-objects/registration-number.vo';
 

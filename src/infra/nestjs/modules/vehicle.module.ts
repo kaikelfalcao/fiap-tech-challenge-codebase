@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { VehicleRepository } from 'src/application/ports/vehicle-repository';
+import { VehicleRepository } from 'src/application/ports/vehicle.repository';
 import { CreateVehicleUseCase } from 'src/application/usecases/create-vehicle.usecase';
 import { DeleteVehicleUseCase } from 'src/application/usecases/delete-vehicle.usecase';
 import { FindAllVehiclesUseCase } from 'src/application/usecases/find-all-vehicles.usecase';

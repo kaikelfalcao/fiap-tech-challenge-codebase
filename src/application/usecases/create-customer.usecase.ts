@@ -1,6 +1,6 @@
 import { Customer } from 'src/domain/entities/customer.entity';
 import { UseCase } from '../base.usecase';
-import { CustomerRepository } from '../ports/customer-repository';
+import { CustomerRepository } from '../ports/customer.repository';
 import { CustomerAlreadyExistsError } from 'src/domain/errors/customer-already-exists.error';
 
 interface CreateCustomerInput {

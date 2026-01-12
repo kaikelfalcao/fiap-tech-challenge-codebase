@@ -1,6 +1,6 @@
 import { CustomerNotFound } from 'src/domain/errors/customer-not-found.error';
 import { UseCase } from '../base.usecase';
-import { CustomerRepository } from '../ports/customer-repository';
+import { CustomerRepository } from '../ports/customer.repository';
 
 interface DeleteCustomerInput {
   id: string;

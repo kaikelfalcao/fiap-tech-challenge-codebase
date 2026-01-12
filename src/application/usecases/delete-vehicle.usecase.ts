@@ -1,5 +1,5 @@
 import { UseCase } from '../base.usecase';
-import { VehicleRepository } from '../ports/vehicle-repository';
+import { VehicleRepository } from '../ports/vehicle.repository';
 
 interface DeleteVehicleInput {
   id: string;

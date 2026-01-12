@@ -1,4 +1,4 @@
-import { CustomerRepository } from 'src/application/ports/customer-repository';
+import { CustomerRepository } from 'src/application/ports/customer.repository';
 import { Repository } from 'typeorm';
 import { CustomerOrm } from '../entities/customer.orm';
 import { Customer } from 'src/domain/entities/customer.entity';

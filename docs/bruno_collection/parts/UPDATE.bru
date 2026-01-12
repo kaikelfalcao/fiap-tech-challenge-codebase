@@ -1,0 +1,29 @@
+meta {
+  name: UPDATE
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{API_URL}}/parts/:id
+  body: json
+  auth: inherit
+}
+
+params:path {
+  id: 1e53d20b-70f8-4061-b82a-9f9b92249017
+}
+
+body:json {
+  {
+    "name": "Brake Pad Premium",
+    "price": 59.99,
+    "quantity": 15
+  }
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

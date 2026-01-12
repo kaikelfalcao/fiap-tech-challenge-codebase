@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CustomerRepository } from 'src/application/ports/customer-repository';
+import { CustomerRepository } from 'src/application/ports/customer.repository';
 import { CreateCustomerUseCase } from 'src/application/usecases/create-customer.usecase';
 import { DeleteCustomerUseCase } from 'src/application/usecases/delete-customer.usecase';
 import { FindAllCustomersUseCase } from 'src/application/usecases/find-all-customers.usecase';

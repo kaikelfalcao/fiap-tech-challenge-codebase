@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tech-challenge-api
+  labels:
+    app: tech-challenge-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tech-challenge-api
+  template:
+    metadata:
+      labels:
+        app: tech-challenge-api
+    spec:
+      containers:
+        - name: tech-challenge-api
+          image: tech-challenge-api:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: api-config
+            - secretRef:
+                name: api-secrets

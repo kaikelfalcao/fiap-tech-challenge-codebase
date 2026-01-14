@@ -3,7 +3,6 @@ kind: Deployment
 metadata:
   name: {{ .Values.app.name }}
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: {{ .Values.app.name }}
@@ -29,3 +28,10 @@ spec:
                 name: {{ .Values.app.name }}-config
             - secretRef:
                 name: {{ .Values.app.name }}-secrets
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"

@@ -1,0 +1,56 @@
+# =========================
+# Configurações da API
+# =========================
+app:
+  name: tech-challenge-api
+  image:
+    repository: tech-challenge-api
+    tag: latest
+    pullPolicy: IfNotPresent
+  replicas: 2
+
+service:
+  type: NodePort
+  port: 3000
+  nodePort: 30000
+
+env:
+  POSTGRES_HOST: postgres
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: app
+  POSTGRES_USER: app
+  APP_PORT: "3000"
+  NODE_ENV: development
+  JWT_EXPIRES_IN: 1d
+
+secrets:
+  POSTGRES_PASSWORD: app
+  JWT_SECRET: tech-challenge
+
+# =========================
+# Configurações do Postgres
+# =========================
+postgres:
+  name: postgres
+
+  image:
+    repository: postgres
+    tag: "16"
+
+  port: 5432
+
+  database: app
+  user: app
+  password: app
+
+  persistence:
+    enabled: true
+    size: 1Gi
+
+
+# =========================
+# Configurações globais
+# =========================
+global:
+  namespace: default
+

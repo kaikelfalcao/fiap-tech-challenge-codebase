@@ -22,7 +22,7 @@ import { FindServiceOrderUseCase } from 'src/application/usecases/service-order/
 import { FindAllServiceOrderUseCase } from 'src/application/usecases/service-order/find-all-service-order.usecase';
 import { DeleteServiceOrderUseCase } from 'src/application/usecases/service-order/delete-service-order.usecase';
 import { FindByCustomerAndVehicleServiceOrderUseCase } from 'src/application/usecases/service-order/find-by-customer-and-vehicle-service-order.usecase';
-import { JwtAuthGuard } from 'src/infra/auth/jwt.guard';
+import { JwtAuthGuard } from '@infrastructure/auth/jwt.guard';
 
 @Controller('service-orders')
 export class ServiceOrderController {

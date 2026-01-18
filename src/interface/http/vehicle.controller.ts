@@ -20,7 +20,7 @@ import { VehicleResponseDto } from './dtos/vehicle-response.dto';
 import { VehiclePresenter } from '../presenters/vehicle.presenter';
 import { CreateVehicleDto } from './dtos/create-vehicle.dto';
 import { UpdateVehicleDto } from './dtos/update-vehicle.dto';
-import { JwtAuthGuard } from 'src/infra/auth/jwt.guard';
+import { JwtAuthGuard } from '@infrastructure/auth/jwt.guard';
 
 @Controller('vehicles')
 export class VehicleController {

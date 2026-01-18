@@ -14,7 +14,7 @@ import { FindAllRepairsUseCase } from 'src/application/usecases/repair/find-all-
 import { FindRepairUseCase } from 'src/application/usecases/repair/find-repair.usecase';
 import { UpdateRepairUseCase } from 'src/application/usecases/repair/update-repair.usecase';
 import { Repair } from 'src/domain/entities/repair.entity';
-import { JwtAuthGuard } from 'src/infra/auth/jwt.guard';
+import { JwtAuthGuard } from '@infrastructure/auth/jwt.guard';
 
 @Controller('repairs')
 export class RepairController {

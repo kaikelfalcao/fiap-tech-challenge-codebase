@@ -15,7 +15,7 @@ import { DeletePartUseCase } from 'src/application/usecases/part/delete-part.use
 import { FindPartUseCase } from 'src/application/usecases/part/find-part.usecase';
 import { FindAllPartsUseCase } from 'src/application/usecases/part/find-all-parts.usecase';
 import { PartPresenter } from '../presenters/part.presenter';
-import { JwtAuthGuard } from 'src/infra/auth/jwt.guard';
+import { JwtAuthGuard } from '@infrastructure/auth/jwt.guard';
 
 @Controller('parts')
 export class PartController {

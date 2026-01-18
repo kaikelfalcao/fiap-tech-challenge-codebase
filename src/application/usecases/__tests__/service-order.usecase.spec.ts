@@ -1,17 +1,12 @@
-import { ServiceOrderRepository } from 'src/domain/repositories/service-order-repository';
-import { ServiceOrder } from 'src/domain/entities/service-order.entity';
-import { CustomerNotFound } from 'src/domain/errors/customer-not-found.error';
-import { VehicleNotFound } from 'src/domain/errors/vehicle-not-found.error';
-
+import { ServiceOrderRepository } from '@domain/repositories/service-order.repository';
 import { CreateServiceOrderUseCase } from '../service-order/create-service-order.usecase';
+import { ServiceOrder } from '@domain/entities/service-order.entity';
 import { DeleteServiceOrderUseCase } from '../service-order/delete-service-order.usecase';
 import { FindAllServiceOrderUseCase } from '../service-order/find-all-service-order.usecase';
 import { FindByCustomerAndVehicleServiceOrderUseCase } from '../service-order/find-by-customer-and-vehicle-service-order.usecase';
+import { CustomerNotFound } from '@domain/customer/errors/customer-not-found.error';
+import { VehicleNotFound } from '@domain/errors/vehicle-not-found.error';
 import { FindServiceOrderUseCase } from '../service-order/find-service-order.usecase';
-
-/* -------------------------------------------------------------------------- */
-/*                                   FACTORIES                                */
-/* -------------------------------------------------------------------------- */
 
 const makeRepo = (): jest.Mocked<ServiceOrderRepository> => ({
   save: jest.fn(),

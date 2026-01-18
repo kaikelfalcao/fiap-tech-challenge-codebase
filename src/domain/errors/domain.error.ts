@@ -1,7 +1,3 @@
-export abstract class DomainError extends Error {
-  abstract readonly code: string;
+import { BaseError } from '@shared/errors/base.error';
 
-  protected constructor(message: string) {
-    super(message);
-  }
-}
+export abstract class DomainError extends BaseError {}

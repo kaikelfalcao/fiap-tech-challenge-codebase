@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import type { ServiceOrderRepository } from 'src/domain/repositories/service-order.repository';
 import { ServiceOrder } from 'src/domain/entities/service-order.entity';
-import { FindCustomerUseCase } from '../customer/find-customer.usecase';
+import { FindCustomerUseCase } from '../../customer/find/find-customer.usecase';
 import { FindVehicleUseCase } from '../vehicle/find-vehicle.usecase';
-import { CustomerNotFound } from 'src/domain/errors/customer-not-found.error';
 import { VehicleNotFound } from 'src/domain/errors/vehicle-not-found.error';
+import { CustomerNotFound } from '@domain/customer/errors/customer-not-found.error';
 
 @Injectable()
 export class FindByCustomerAndVehicleServiceOrderUseCase {

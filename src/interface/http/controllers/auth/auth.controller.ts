@@ -1,7 +1,7 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AuthenticateUserUseCase } from 'src/application/usecases/user/authenticate-user.usecase';
-import { RegisterUserUseCase } from 'src/application/usecases/user/register-user.usecase';
+import { AuthenticateUserUseCase } from '@application/user/authenticate/authenticate-user.usecase';
+import { RegisterUserUseCase } from '@application/user/register/register-user.usecase';
 
 @Controller('auth')
 export class AuthController {

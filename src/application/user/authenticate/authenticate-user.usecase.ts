@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { InvalidInputError } from '@shared/errors/invalid-input.error';
 import * as bcrypt from 'bcrypt';
 import type { UserRepository } from 'src/domain/repositories/user.repository';
 
@@ -10,13 +11,13 @@ export class AuthenticateUserUseCase {
     const user = await this.userRepo.findByUsername(username);
 
     if (!user) {
-      throw new Error('Invalid credentials');
+      throw new InvalidInputError('Invalid credentials');
     }
 
     const passwordValid = await bcrypt.compare(password, user.passwordHash);
 
     if (!passwordValid) {
-      throw new Error('Invalid credentials');
+      throw new InvalidInputError('Invalid credentials');
     }
 
     return user;

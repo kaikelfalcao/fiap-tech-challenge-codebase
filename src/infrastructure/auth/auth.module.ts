@@ -4,10 +4,10 @@ import { PassportModule } from '@nestjs/passport';
 
 import { JwtStrategy } from './jwt.strategy';
 import { ConfigService } from '../config/config.service';
-import { AuthController } from 'src/interface/http/auth.controller';
-import { AuthenticateUserUseCase } from 'src/application/usecases/user/authenticate-user.usecase';
+import { AuthController } from '@interface/http/controllers/auth/auth.controller';
+import { AuthenticateUserUseCase } from '@application/user/authenticate/authenticate-user.usecase';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RegisterUserUseCase } from 'src/application/usecases/user/register-user.usecase';
+import { RegisterUserUseCase } from '@application/user/register/register-user.usecase';
 import { UserOrmEntity } from '@infrastructure/database/typeorm/entities/user.orm';
 import { TypeormUserRepository } from '@infrastructure/database/typeorm/repositories/typeorm-user.repository';
 

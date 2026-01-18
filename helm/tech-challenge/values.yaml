@@ -4,8 +4,8 @@
 app:
   name: tech-challenge-api
   image:
-    repository: tech-challenge-api
-    tag: latest
+    repository: kaikelfalcao/tech-challenge-api-fase-2
+    tag: latest 
     pullPolicy: IfNotPresent
   replicas: 2
   resources:
@@ -24,9 +24,9 @@ service:
 probes:
   readiness:
     path: /api/health
-    initialDelaySeconds: 10
+    initialDelaySeconds: 20
     periodSeconds: 5
-    timeoutSeconds: 2
+    timeoutSeconds: 5
     failureThreshold: 3
 
   liveness:

@@ -7,6 +7,7 @@ import { PartModule } from './infra/nestjs/modules/part.module';
 import { RepairModule } from './infra/nestjs/modules/repair.module';
 import { ServiceOrderModule } from './infra/nestjs/modules/service-order.module';
 import { AuthModule } from './infra/auth/auth.module';
+import { HealthModule } from './infra/nestjs/modules/health.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { AuthModule } from './infra/auth/auth.module';
     RepairModule,
     ServiceOrderModule,
     AuthModule,
+    HealthModule,
   ],
 })
 export class AppModule {}

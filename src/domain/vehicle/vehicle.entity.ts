@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto';
-import { Plate } from '../value-objects/plate.vo';
+import { Plate } from './plate.vo';
 
 export class Vehicle {
   constructor(

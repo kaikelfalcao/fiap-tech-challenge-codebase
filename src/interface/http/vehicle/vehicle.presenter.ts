@@ -1,5 +1,5 @@
-import { Vehicle } from 'src/domain/entities/vehicle.entity';
-import { VehicleResponseDto } from '../http/dtos/vehicle-response.dto';
+import { Vehicle } from '@domain/vehicle/vehicle.entity';
+import { VehicleResponseDto } from './dtos/vehicle-response.dto';
 
 export class VehiclePresenter {
   static toResponse(vehicle: Vehicle): VehicleResponseDto {

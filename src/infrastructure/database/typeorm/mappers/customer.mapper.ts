@@ -1,6 +1,6 @@
 import { Customer } from '@domain/customer/customer.entity';
 import { CustomerOrm } from '../entities/customer.orm';
-import { Vehicle } from 'src/domain/entities/vehicle.entity';
+import { Vehicle } from '@domain/vehicle/vehicle.entity';
 import { VehicleOrm } from '../entities/vehicle.orm';
 
 export class CustomerMapper {

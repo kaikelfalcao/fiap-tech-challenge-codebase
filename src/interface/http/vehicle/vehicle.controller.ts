@@ -4,6 +4,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   NotFoundException,
   Param,
   Post,
@@ -11,13 +13,13 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { CreateVehicleUseCase } from 'src/application/usecases/vehicle/create-vehicle.usecase';
-import { UpdateVehicleUseCase } from 'src/application/usecases/vehicle/update-vehicle.usecase';
-import { DeleteVehicleUseCase } from 'src/application/usecases/vehicle/delete-vehicle.usecase';
-import { FindVehicleUseCase } from 'src/application/usecases/vehicle/find-vehicle.usecase';
-import { FindAllVehiclesUseCase } from 'src/application/usecases/vehicle/find-all-vehicles.usecase';
+import { CreateVehicleUseCase } from '@application/vehicle/create/create-vehicle.usecase';
+import { UpdateVehicleUseCase } from '@application/vehicle/update/update-vehicle.usecase';
+import { DeleteVehicleUseCase } from '@application/vehicle/delete/delete-vehicle.usecase';
+import { FindVehicleUseCase } from '@application/vehicle/find/find-vehicle.usecase';
+import { ListVehicleUseCase } from '@application/vehicle/list/list-vehicle.usecase';
 import { VehicleResponseDto } from './dtos/vehicle-response.dto';
-import { VehiclePresenter } from '../presenters/vehicle.presenter';
+import { VehiclePresenter } from './vehicle.presenter';
 import { CreateVehicleDto } from './dtos/create-vehicle.dto';
 import { UpdateVehicleDto } from './dtos/update-vehicle.dto';
 import { JwtAuthGuard } from '@infrastructure/auth/jwt.guard';
@@ -25,18 +27,33 @@ import { JwtAuthGuard } from '@infrastructure/auth/jwt.guard';
 @Controller('vehicles')
 export class VehicleController {
   constructor(
-    private readonly createVehicleUseCase: CreateVehicleUseCase,
-    private readonly updateVehicleUseCase: UpdateVehicleUseCase,
-    private readonly deleteVehicleUseCase: DeleteVehicleUseCase,
-    private readonly findVehicleUseCase: FindVehicleUseCase,
-    private readonly findAllVehiclesUseCase: FindAllVehiclesUseCase,
+    private readonly createVehicle: CreateVehicleUseCase,
+    private readonly updateVehicle: UpdateVehicleUseCase,
+    private readonly deleteVehicle: DeleteVehicleUseCase,
+    private readonly findVehicle: FindVehicleUseCase,
+    private readonly listVehicles: ListVehicleUseCase,
   ) {}
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  async findAll(): Promise<VehicleResponseDto[]> {
-    const vehicles = await this.findAllVehiclesUseCase.execute();
-    return vehicles.map(VehiclePresenter.toResponse);
+  async findAll(
+    @Query('page') page?: string,
+    @Query('pageSize') pageSize?: string,
+  ) {
+    const pageNum = page ? parseInt(page, 10) : undefined;
+    const pageSizeNum = pageSize ? parseInt(pageSize, 10) : undefined;
+
+    const result = await this.listVehicles.execute({
+      page: pageNum,
+      pageSize: pageSizeNum,
+    });
+
+    const data = result.data.map(VehiclePresenter.toResponse);
+
+    return {
+      data,
+      meta: result.meta,
+    };
   }
 
   @Get('search')
@@ -46,7 +63,7 @@ export class VehicleController {
       throw new BadRequestException('id or plate must be provided');
     }
 
-    const vehicle = await this.findVehicleUseCase.execute({ id, plate });
+    const vehicle = await this.findVehicle.execute({ id, plate });
 
     if (!vehicle) {
       throw new NotFoundException('Vehicle not found');
@@ -58,7 +75,7 @@ export class VehicleController {
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   async findById(@Param('id') id: string) {
-    const vehicle = await this.findVehicleUseCase.execute({ id });
+    const vehicle = await this.findVehicle.execute({ id });
 
     if (!vehicle) {
       throw new NotFoundException('Vehicle not found');
@@ -70,7 +87,7 @@ export class VehicleController {
   @Post()
   @UseGuards(JwtAuthGuard)
   async create(@Body() body: CreateVehicleDto): Promise<VehicleResponseDto> {
-    const vehicle = await this.createVehicleUseCase.execute(body);
+    const vehicle = await this.createVehicle.execute(body);
     return VehiclePresenter.toResponse(vehicle);
   }
 
@@ -86,7 +103,7 @@ export class VehicleController {
       );
     }
 
-    const vehicle = await this.updateVehicleUseCase.execute({
+    const vehicle = await this.updateVehicle.execute({
       id,
       ...body,
     });
@@ -96,7 +113,8 @@ export class VehicleController {
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id') id: string): Promise<void> {
-    await this.deleteVehicleUseCase.execute({ id });
+    await this.deleteVehicle.execute({ id });
   }
 }

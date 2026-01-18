@@ -2,12 +2,12 @@ import { VehicleOrm } from '@infrastructure/database/typeorm/entities/vehicle.or
 import { TypeOrmVehicleRepository } from '@infrastructure/database/typeorm/repositories/typeorm-vehicle.repository';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CreateVehicleUseCase } from 'src/application/usecases/vehicle/create-vehicle.usecase';
-import { DeleteVehicleUseCase } from 'src/application/usecases/vehicle/delete-vehicle.usecase';
-import { FindAllVehiclesUseCase } from 'src/application/usecases/vehicle/find-all-vehicles.usecase';
-import { FindVehicleUseCase } from 'src/application/usecases/vehicle/find-vehicle.usecase';
-import { UpdateVehicleUseCase } from 'src/application/usecases/vehicle/update-vehicle.usecase';
-import { VehicleController } from 'src/interface/http/vehicle.controller';
+import { CreateVehicleUseCase } from '@application/vehicle/create/create-vehicle.usecase';
+import { DeleteVehicleUseCase } from '@application/vehicle/delete/delete-vehicle.usecase';
+import { ListVehicleUseCase } from '@application/vehicle/list/list-vehicle.usecase';
+import { FindVehicleUseCase } from '@application/vehicle/find/find-vehicle.usecase';
+import { UpdateVehicleUseCase } from '@application/vehicle/update/update-vehicle.usecase';
+import { VehicleController } from '@interface/http/vehicle/vehicle.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([VehicleOrm])],
@@ -15,7 +15,7 @@ import { VehicleController } from 'src/interface/http/vehicle.controller';
   providers: [
     { provide: 'VehicleRepository', useClass: TypeOrmVehicleRepository },
     CreateVehicleUseCase,
-    FindAllVehiclesUseCase,
+    ListVehicleUseCase,
     FindVehicleUseCase,
     UpdateVehicleUseCase,
     DeleteVehicleUseCase,

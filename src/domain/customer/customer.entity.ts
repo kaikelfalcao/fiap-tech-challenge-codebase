@@ -1,6 +1,6 @@
 import { RegistrationNumber } from './registration-number.vo';
 import { Email } from './email.vo';
-import { Vehicle } from '../entities/vehicle.entity';
+import { Vehicle } from '../vehicle/vehicle.entity';
 import { randomUUID } from 'crypto';
 
 export class Customer {

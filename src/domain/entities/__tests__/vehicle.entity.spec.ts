@@ -1,5 +1,5 @@
-import { Vehicle } from '../vehicle.entity';
-import { Plate } from '../../value-objects/plate.vo';
+import { Vehicle } from '../../vehicle/vehicle.entity';
+import { Plate } from '../../vehicle/plate.vo';
 
 describe('Vehicle entity', () => {
   const validPlate = 'ABC-1234';

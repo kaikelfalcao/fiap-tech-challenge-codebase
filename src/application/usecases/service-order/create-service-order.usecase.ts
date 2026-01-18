@@ -1,7 +1,7 @@
 import type { ServiceOrderRepository } from 'src/domain/repositories/service-order.repository';
 import { ServiceOrder } from 'src/domain/entities/service-order.entity';
 import { FindCustomerUseCase } from '../../customer/find/find-customer.usecase';
-import { FindVehicleUseCase } from '../vehicle/find-vehicle.usecase';
+import { FindVehicleUseCase } from '../../vehicle/find/find-vehicle.usecase';
 import { ReservePartsUseCase } from '../part/reserve-part.usecase';
 import { GetRepairsUseCase } from '../repair/get-repair.usecase';
 import { Inject, Injectable } from '@nestjs/common';

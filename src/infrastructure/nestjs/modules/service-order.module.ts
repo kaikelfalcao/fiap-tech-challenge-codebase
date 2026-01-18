@@ -1,10 +1,10 @@
-import { FindVehicleUseCase } from 'src/application/usecases/vehicle/find-vehicle.usecase';
+import { FindVehicleUseCase } from '@application/vehicle/find/find-vehicle.usecase';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PartModule } from './part.module';
 import { RepairModule } from './repair.module';
-import { VehicleModule } from './vehicle.module';
-import { CustomerModule } from '../../../interface/http/customers/customer.module';
+import { VehicleModule } from '../../../interface/http/vehicle/vehicle.module';
+import { CustomerModule } from '../../../interface/http/customer/customer.module';
 import { ServiceOrderController } from 'src/interface/http/service-order.controller';
 import { FindCustomerUseCase } from '@application/customer/find/find-customer.usecase';
 import { ReservePartsUseCase } from 'src/application/usecases/part/reserve-part.usecase';

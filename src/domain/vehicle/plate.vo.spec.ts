@@ -1,4 +1,4 @@
-import { Plate } from '../plate.vo';
+import { Plate } from './plate.vo';
 
 describe('Plate Value Object', () => {
   it('should create a plate with old pattern', () => {

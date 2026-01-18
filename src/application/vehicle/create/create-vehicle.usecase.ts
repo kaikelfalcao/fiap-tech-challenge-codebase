@@ -1,7 +1,6 @@
-import { Vehicle } from 'src/domain/entities/vehicle.entity';
-import { UseCase } from '../../base.usecase';
+import { Vehicle } from '@domain/vehicle/vehicle.entity';
 import { Inject, Injectable } from '@nestjs/common';
-import type { VehicleRepository } from 'src/domain/repositories/vehicle.repository';
+import type { VehicleRepository } from '@domain/vehicle/vehicle.repository';
 
 interface CreateVehicleInput {
   brand: string;
@@ -12,12 +11,10 @@ interface CreateVehicleInput {
 }
 
 @Injectable()
-export class CreateVehicleUseCase implements UseCase<
-  CreateVehicleInput,
-  Vehicle
-> {
+export class CreateVehicleUseCase {
   constructor(
-    @Inject('VehicleRepository') private readonly repo: VehicleRepository,
+    @Inject('VehicleRepository')
+    private readonly vehicleRepository: VehicleRepository,
   ) {}
 
   async execute(input: CreateVehicleInput): Promise<Vehicle> {
@@ -29,7 +26,7 @@ export class CreateVehicleUseCase implements UseCase<
       input.customerId,
     );
 
-    await this.repo.save(vehicle);
+    await this.vehicleRepository.save(vehicle);
 
     return vehicle;
   }

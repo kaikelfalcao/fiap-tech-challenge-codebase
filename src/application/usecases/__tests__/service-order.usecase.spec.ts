@@ -5,7 +5,7 @@ import { DeleteServiceOrderUseCase } from '../service-order/delete-service-order
 import { FindAllServiceOrderUseCase } from '../service-order/find-all-service-order.usecase';
 import { FindByCustomerAndVehicleServiceOrderUseCase } from '../service-order/find-by-customer-and-vehicle-service-order.usecase';
 import { CustomerNotFound } from '@domain/customer/errors/customer-not-found.error';
-import { VehicleNotFound } from '@domain/errors/vehicle-not-found.error';
+import { VehicleNotFound } from '@domain/vehicle/vehicle-not-found.error';
 import { FindServiceOrderUseCase } from '../service-order/find-service-order.usecase';
 
 const makeRepo = (): jest.Mocked<ServiceOrderRepository> => ({

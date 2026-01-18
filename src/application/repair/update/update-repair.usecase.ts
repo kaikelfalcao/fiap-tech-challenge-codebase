@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { RepairRepository } from 'src/domain/repositories/repair.repository';
-import { Repair } from 'src/domain/entities/repair.entity';
+import type { RepairRepository } from '@domain/repair/repair.repository';
+import { Repair } from '@domain/repair/repair.entity';
 
 @Injectable()
 export class UpdateRepairUseCase {

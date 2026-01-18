@@ -7,7 +7,7 @@ import {
 } from '../part/reserve-part.usecase';
 import { ReturnPartsUseCase } from '../part/return-part.usecase';
 import { FindPartUseCase } from '../part/find-part.usecase';
-import { FindRepairUseCase } from '../repair/find-repair.usecase';
+import { FindRepairUseCase } from '../../repair/find/find-repair.usecase';
 
 export interface UpdateServiceOrderInput {
   serviceOrderId: string;

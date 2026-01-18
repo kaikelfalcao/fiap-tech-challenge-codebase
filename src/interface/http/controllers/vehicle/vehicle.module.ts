@@ -7,7 +7,7 @@ import { DeleteVehicleUseCase } from '@application/vehicle/delete/delete-vehicle
 import { ListVehicleUseCase } from '@application/vehicle/list/list-vehicle.usecase';
 import { FindVehicleUseCase } from '@application/vehicle/find/find-vehicle.usecase';
 import { UpdateVehicleUseCase } from '@application/vehicle/update/update-vehicle.usecase';
-import { VehicleController } from '@interface/http/vehicle/vehicle.controller';
+import { VehicleController } from '@interface/http/controllers/vehicle/vehicle.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([VehicleOrm])],

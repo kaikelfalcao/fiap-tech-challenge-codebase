@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { RepairRepository } from 'src/domain/repositories/repair.repository';
+import type { RepairRepository } from '@domain/repair/repair.repository';
 
 export interface GetRepairInput {
   repairId: string;
@@ -14,7 +14,7 @@ export interface GetRepairOutput {
 }
 
 @Injectable()
-export class GetRepairsUseCase {
+export class CalculateRepairCostsUseCase {
   constructor(
     @Inject('RepairRepository') private readonly repository: RepairRepository,
   ) {}

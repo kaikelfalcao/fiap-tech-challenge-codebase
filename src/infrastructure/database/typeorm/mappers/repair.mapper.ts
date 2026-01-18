@@ -1,4 +1,4 @@
-import { Repair } from 'src/domain/entities/repair.entity';
+import { Repair } from '@domain/repair/repair.entity';
 import { RepairOrm } from '../entities/repair.orm';
 
 export class RepairMapper {

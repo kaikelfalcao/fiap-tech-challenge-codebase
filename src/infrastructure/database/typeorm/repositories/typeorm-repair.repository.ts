@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Repair } from 'src/domain/entities/repair.entity';
+import { Repair } from '@domain/repair/repair.entity';
 import { RepairOrm } from '../entities/repair.orm';
 import { RepairMapper } from '../mappers/repair.mapper';
-import type { RepairRepository } from 'src/domain/repositories/repair.repository';
+import type { RepairRepository } from '@domain/repair/repair.repository';
 
 @Injectable()
 export class TypeOrmRepairRepository implements RepairRepository {
@@ -22,9 +22,18 @@ export class TypeOrmRepairRepository implements RepairRepository {
     return orm ? RepairMapper.toEntity(orm) : null;
   }
 
-  async findAll(): Promise<Repair[]> {
-    const ormList = await this.repo.find();
-    return ormList.map(RepairMapper.toEntity);
+  async findAll(options?: { skip?: number; take?: number }) {
+    const repairs = await this.repo.find({
+      skip: options?.skip,
+      take: options?.take,
+      order: { createdAt: 'DESC' },
+    });
+
+    return repairs.map(RepairMapper.toEntity);
+  }
+
+  async count(): Promise<number> {
+    return this.repo.count();
   }
 
   async update(repair: Repair): Promise<void> {

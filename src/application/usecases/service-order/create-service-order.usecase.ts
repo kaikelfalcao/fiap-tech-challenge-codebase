@@ -3,7 +3,7 @@ import { ServiceOrder } from 'src/domain/entities/service-order.entity';
 import { FindCustomerUseCase } from '../../customer/find/find-customer.usecase';
 import { FindVehicleUseCase } from '../../vehicle/find/find-vehicle.usecase';
 import { ReservePartsUseCase } from '../part/reserve-part.usecase';
-import { GetRepairsUseCase } from '../repair/get-repair.usecase';
+import { CalculateRepairCostsUseCase } from '../../repair/calculate-repair-cost/calculate-repair-cost.usecase';
 import { Inject, Injectable } from '@nestjs/common';
 
 export interface CreateServiceOrderInput {
@@ -19,7 +19,7 @@ export class CreateServiceOrderUseCase {
     private readonly findCustomerUseCase: FindCustomerUseCase,
     private readonly findVehicleUseCase: FindVehicleUseCase,
     private readonly reservePartsUseCase: ReservePartsUseCase,
-    private readonly getRepairsUseCase: GetRepairsUseCase,
+    private readonly CalculateRepairCostsUseCase: CalculateRepairCostsUseCase,
     @Inject('ServiceOrderRepository')
     private readonly repository: ServiceOrderRepository,
   ) {}
@@ -51,7 +51,7 @@ export class CreateServiceOrderUseCase {
 
     if (input.repairs?.length) {
       const { processed: processedRepairs } =
-        await this.getRepairsUseCase.execute(input.repairs);
+        await this.CalculateRepairCostsUseCase.execute(input.repairs);
       processedRepairs.forEach((r) =>
         order.assignRepair(r.repairId, r.costAtTime),
       );

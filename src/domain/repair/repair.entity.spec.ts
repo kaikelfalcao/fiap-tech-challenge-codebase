@@ -1,4 +1,4 @@
-import { Repair } from '../repair.entity';
+import { Repair } from './repair.entity';
 
 describe('Repair entity', () => {
   it('should create a valid repair', () => {

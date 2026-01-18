@@ -4,6 +4,7 @@ import {
   ExceptionFilter,
   HttpException,
   HttpStatus,
+  Logger,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { DomainError } from 'src/domain/errors/domain.error';
@@ -11,6 +12,7 @@ import { ERROR_STATUS_MAP } from 'src/interface/http/error-status.map';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
+  private readonly logger = new Logger(GlobalExceptionFilter.name);
   catch(exception: unknown, host: ArgumentsHost) {
     const res = host.switchToHttp().getResponse<Response>();
 
@@ -38,7 +40,10 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         );
     }
 
-    console.log(exception);
+    this.logger.error(
+      'Unexpected error',
+      exception instanceof Error ? exception.stack : undefined,
+    );
 
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
       error: {

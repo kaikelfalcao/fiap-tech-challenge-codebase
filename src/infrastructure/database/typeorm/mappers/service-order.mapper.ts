@@ -1,9 +1,9 @@
-import { ServiceOrder } from 'src/domain/entities/service-order.entity';
+import { ServiceOrder } from '@domain/service-order/service-order.entity';
 import { ServiceOrderOrm } from '../entities/service-order.orm';
 import { PartsOnServiceOrdersOrm } from '../entities/parts-on-service-orders.orm';
 import { RepairsOnServiceOrdersOrm } from '../entities/repairs-on-service-orders.orm';
-import { PartsOnServiceOrder } from 'src/domain/entities/parts-on-service-order.entity';
-import { RepairsOnServiceOrder } from 'src/domain/entities/repairs-on-service-order.entity';
+import { RepairsOnServiceOrder } from '@domain/service-order/repairs-on-service-order.entity';
+import { PartsOnServiceOrder } from '@domain/service-order/parts-on-service-order.entity';
 
 export class ServiceOrderMapper {
   static toOrm(entity: ServiceOrder): ServiceOrderOrm {

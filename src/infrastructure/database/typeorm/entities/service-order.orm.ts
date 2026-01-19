@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
   ValueTransformer,
 } from 'typeorm';
-import { ServiceOrderStatus } from 'src/domain/enums/service-order-status.enum';
+import { ServiceOrderStatus } from '@domain/service-order/service-order-status.enum';
 import { CustomerOrm } from './customer.orm';
 import { VehicleOrm } from './vehicle.orm';
 import { PartsOnServiceOrdersOrm } from './parts-on-service-orders.orm';

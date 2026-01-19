@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ServiceOrderOrm } from '../entities/service-order.orm';
-import { ServiceOrder } from 'src/domain/entities/service-order.entity';
-import { ServiceOrderRepository } from 'src/domain/repositories/service-order.repository';
+import { ServiceOrder } from '@domain/service-order/service-order.entity';
+import { ServiceOrderRepository } from '@domain/service-order/service-order.repository';
 import { ServiceOrderMapper } from '../mappers/service-order.mapper';
-import { ServiceOrderStatus } from 'src/domain/enums/service-order-status.enum';
+import { ServiceOrderStatus } from '@domain/service-order/service-order-status.enum';
 
 @Injectable()
 export class TypeOrmServiceOrderRepository implements ServiceOrderRepository {

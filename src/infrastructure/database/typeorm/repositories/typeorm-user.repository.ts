@@ -2,7 +2,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserRepository } from '@domain/user/user.repository';
 import { UserOrmEntity } from '../entities/user.orm';
-import { User } from 'src/domain/entities/user.entity';
+import { User } from '@domain/user/user.entity';
 
 export class TypeormUserRepository implements UserRepository {
   constructor(

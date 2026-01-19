@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
-import { User } from 'src/domain/entities/user.entity';
+import { User } from '@domain/user/user.entity';
 import type { UserRepository } from '@domain/user/user.repository';
 import { UserAlreadyExistsError } from '../errors/user-already-exists.error';
 

@@ -1,17 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CustomerResponseDto {
+export class RepairResponseDto {
   @ApiProperty({ example: 'uuid' })
   id: string;
 
-  @ApiProperty({ example: 'Empresa X' })
-  name: string;
+  @ApiProperty({ example: 'Troca de embreagem' })
+  description: string;
 
-  @ApiProperty({ example: 'contato@empresa.com' })
-  email: string;
-
-  @ApiProperty({ example: '123456789' })
-  registrationNumber: string;
+  @ApiProperty({ example: 1200.5 })
+  cost: number;
 
   @ApiProperty({
     example: '2025-01-10T12:34:56.000Z',

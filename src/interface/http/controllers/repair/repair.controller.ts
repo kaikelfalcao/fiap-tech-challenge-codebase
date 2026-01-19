@@ -11,6 +11,7 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
+
 import {
   CreateRepairUseCase,
   DeleteRepairUseCase,
@@ -18,9 +19,27 @@ import {
   ListRepairUseCase,
   UpdateRepairUseCase,
 } from '@application/repair';
-import { Repair } from '@domain/repair/repair.entity';
+
 import { JwtAuthGuard } from '@infrastructure/auth/jwt.guard';
 
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiQuery,
+  ApiParam,
+  ApiBody,
+} from '@nestjs/swagger';
+
+import { CreateRepairDto } from './dtos/create-repair.dto';
+import { UpdateRepairDto } from './dtos/update-repair.dto';
+import { RepairResponseDto } from './dtos/repair-response.dto';
+import { RepairPresenter } from './repair.presenter';
+
+@ApiTags('repairs')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('repairs')
 export class RepairController {
   constructor(
@@ -32,37 +51,101 @@ export class RepairController {
   ) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
-  async create(
-    @Body() body: { description: string; cost: number },
-  ): Promise<Repair> {
-    return this.createRepair.execute(body);
+  @ApiOperation({ summary: 'Cria um novo reparo' })
+  @ApiBody({ type: CreateRepairDto })
+  @ApiResponse({
+    status: 201,
+    description: 'Reparo criado com sucesso',
+    type: () => RepairResponseDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Dados inválidos',
+  })
+  async create(@Body() body: CreateRepairDto): Promise<RepairResponseDto> {
+    const repair = await this.createRepair.execute(body);
+    return RepairPresenter.toResponse(repair);
   }
 
   @Put(':id')
-  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Atualiza um reparo existente' })
+  @ApiParam({ name: 'id', example: 'uuid' })
+  @ApiBody({ type: UpdateRepairDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Reparo atualizado com sucesso',
+    type: () => RepairResponseDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Reparo não encontrado',
+  })
   async update(
     @Param('id') id: string,
-    @Body() body: { description?: string; cost?: number },
-  ): Promise<Repair> {
-    return this.updateRepair.execute({ id, ...body });
+    @Body() body: UpdateRepairDto,
+  ): Promise<RepairResponseDto> {
+    const repair = await this.updateRepair.execute({ id, ...body });
+    return RepairPresenter.toResponse(repair);
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Remove um reparo' })
+  @ApiParam({ name: 'id', example: 'uuid' })
+  @ApiResponse({
+    status: 204,
+    description: 'Reparo removido com sucesso',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Reparo não encontrado',
+  })
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(JwtAuthGuard)
   async delete(@Param('id') id: string): Promise<void> {
-    return this.deleteRepair.execute({ id });
+    await this.deleteRepair.execute({ id });
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
-  async find(@Param('id') id: string): Promise<Repair | null> {
-    return this.findRepair.execute({ id });
+  @ApiOperation({ summary: 'Busca um reparo por ID' })
+  @ApiParam({ name: 'id', example: 'uuid' })
+  @ApiResponse({
+    status: 200,
+    description: 'Reparo encontrado',
+    type: () => RepairResponseDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Reparo não encontrado',
+  })
+  async find(@Param('id') id: string): Promise<RepairResponseDto | null> {
+    const repair = await this.findRepair.execute({ id });
+    return RepairPresenter.toResponse(repair);
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Lista reparos com paginação opcional' })
+  @ApiQuery({ name: 'page', required: false, example: 1 })
+  @ApiQuery({ name: 'pageSize', required: false, example: 10 })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de reparos retornada com sucesso',
+    schema: {
+      example: {
+        data: [
+          {
+            id: 'uuid',
+            description: 'Troca de embreagem',
+            cost: 1200.5,
+          },
+        ],
+        meta: {
+          page: 1,
+          pageSize: 10,
+          total: 12,
+          totalPages: 2,
+        },
+      },
+    },
+  })
   async findAll(
     @Query('page') page?: string,
     @Query('pageSize') pageSize?: string,
@@ -76,7 +159,7 @@ export class RepairController {
     });
 
     return {
-      data: result.data,
+      data: result.data.map(RepairPresenter.toResponse),
       meta: result.meta,
     };
   }

@@ -22,9 +22,15 @@ jobs:
       - name: Build Docker image
         run: |
           TAG=${GITHUB_REF#refs/tags/}
-          docker build -t kaikelfalcao/tech-challenge-api-fase-2:$TAG .
-      
-      - name: Push Docker image
+
+          docker build \
+            -t kaikelfalcao/tech-challenge-api-fase-2:$TAG \
+            -t kaikelfalcao/tech-challenge-api-fase-2:latest \
+            .
+
+      - name: Push Docker images
         run: |
           TAG=${GITHUB_REF#refs/tags/}
+
           docker push kaikelfalcao/tech-challenge-api-fase-2:$TAG
+          docker push kaikelfalcao/tech-challenge-api-fase-2:latest

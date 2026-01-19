@@ -1,17 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CustomerResponseDto {
+export class PartResponseDto {
   @ApiProperty({ example: 'uuid' })
   id: string;
 
-  @ApiProperty({ example: 'Empresa X' })
+  @ApiProperty({ example: 'Filtro de óleo' })
   name: string;
 
-  @ApiProperty({ example: 'contato@empresa.com' })
-  email: string;
+  @ApiProperty({ example: 'FR-1234' })
+  sku: string;
 
-  @ApiProperty({ example: '123456789' })
-  registrationNumber: string;
+  @ApiProperty({ example: 49.9 })
+  price: number;
+
+  @ApiProperty({ example: 100 })
+  quantity: number;
 
   @ApiProperty({
     example: '2025-01-10T12:34:56.000Z',

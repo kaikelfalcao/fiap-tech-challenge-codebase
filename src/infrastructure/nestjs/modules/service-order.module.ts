@@ -1,13 +1,13 @@
 import { FindVehicleUseCase } from '@application/vehicle/find/find-vehicle.usecase';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PartModule } from './part.module';
+import { PartModule } from '../../../interface/http/controllers/part/part.module';
 import { RepairModule } from '../../../interface/http/controllers/repair/repair.module';
 import { VehicleModule } from '../../../interface/http/controllers/vehicle/vehicle.module';
 import { CustomerModule } from '../../../interface/http/controllers/customer/customer.module';
 import { ServiceOrderController } from 'src/interface/http/service-order.controller';
 import { FindCustomerUseCase } from '@application/customer/find/find-customer.usecase';
-import { ReservePartsUseCase } from 'src/application/usecases/part/reserve-part.usecase';
+import { ReservePartUseCase } from '@application/part/reserve/reserve-part.usecase';
 import { CalculateRepairCostsUseCase } from '@application/repair/calculate-repair-cost/calculate-repair-cost.usecase';
 import { CreateServiceOrderUseCase } from 'src/application/usecases/service-order/create-service-order.usecase';
 import { UpdateServiceOrderUseCase } from 'src/application/usecases/service-order/update-service-order.usecase';
@@ -42,7 +42,7 @@ import { ServiceOrderOrm } from '@infrastructure/database/typeorm/entities/servi
     },
     FindCustomerUseCase,
     FindVehicleUseCase,
-    ReservePartsUseCase,
+    ReservePartUseCase,
     CalculateRepairCostsUseCase,
 
     CreateServiceOrderUseCase,

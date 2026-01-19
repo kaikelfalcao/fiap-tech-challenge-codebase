@@ -1,5 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { PartRepository } from 'src/domain/repositories/part.repository';
+import { InvalidInputError } from '@shared/errors/invalid-input.error';
+import type { PartRepository } from '@domain/part/part.repository';
+import { InsufficientStockPort } from '../errors/insufficient-stock-part.error';
 
 export interface ReservePartInput {
   partId: string;
@@ -16,9 +18,9 @@ export interface ReservePartOutput {
 }
 
 @Injectable()
-export class ReservePartsUseCase {
+export class ReservePartUseCase {
   constructor(
-    @Inject('PartRepository') private readonly repository: PartRepository,
+    @Inject('PartRepository') private readonly partRepository: PartRepository,
   ) {}
 
   async execute(parts: ReservePartInput[]): Promise<ReservePartOutput> {
@@ -26,17 +28,19 @@ export class ReservePartsUseCase {
     let totalCost = 0;
 
     for (const item of parts) {
-      const part = await this.repository.findById(item.partId);
+      const part = await this.partRepository.findById(item.partId);
       if (!part) {
-        throw new Error(`Peça ${item.partId} não encontrada`);
+        throw new InvalidInputError(`Peça ${item.partId} não encontrada`);
       }
       if (part.quantity < item.quantity) {
-        throw new Error(`Estoque insuficiente para peça ${part.name}`);
+        throw new InsufficientStockPort(
+          `Estoque insuficiente para peça ${part.name}`,
+        );
       }
 
       part.changeQuantity(part.quantity - item.quantity);
 
-      await this.repository.update(part);
+      await this.partRepository.update(part);
 
       processed.push({
         partId: part.id,

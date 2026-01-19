@@ -2,11 +2,11 @@ import { Inject, Injectable } from '@nestjs/common';
 import type { ServiceOrderRepository } from 'src/domain/repositories/service-order.repository';
 import { ServiceOrder } from 'src/domain/entities/service-order.entity';
 import {
-  ReservePartsUseCase,
+  ReservePartUseCase,
   ReservePartInput,
-} from '../part/reserve-part.usecase';
-import { ReturnPartsUseCase } from '../part/return-part.usecase';
-import { FindPartUseCase } from '../part/find-part.usecase';
+} from '../../part/reserve/reserve-part.usecase';
+import { ReturnPartUseCase } from '../../part/return/return-part.usecase';
+import { FindPartUseCase } from '../../part/find/find-part.usecase';
 import { FindRepairUseCase } from '../../repair/find/find-repair.usecase';
 
 export interface UpdateServiceOrderInput {
@@ -25,8 +25,8 @@ export class UpdateServiceOrderUseCase {
   constructor(
     @Inject('ServiceOrderRepository')
     private readonly repository: ServiceOrderRepository,
-    private readonly reservePartsUseCase: ReservePartsUseCase,
-    private readonly returnPartsUseCase: ReturnPartsUseCase,
+    private readonly ReservePartUseCase: ReservePartUseCase,
+    private readonly ReturnPartUseCase: ReturnPartUseCase,
     private readonly findPartUseCase: FindPartUseCase,
     private readonly findRepairUseCase: FindRepairUseCase,
   ) {}
@@ -83,13 +83,13 @@ export class UpdateServiceOrderUseCase {
     }
 
     if (removedParts.length) {
-      await this.returnPartsUseCase.execute(
+      await this.ReturnPartUseCase.execute(
         removedParts.map((p) => ({ partId: p.partId, quantity: p.quantity })),
       );
     }
 
     if (partsToReserve.length) {
-      await this.reservePartsUseCase.execute(partsToReserve);
+      await this.ReservePartUseCase.execute(partsToReserve);
     }
 
     if (input.repairs) {

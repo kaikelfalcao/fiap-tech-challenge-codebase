@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InvalidInputError } from '@shared/errors/invalid-input.error';
 import * as bcrypt from 'bcrypt';
-import type { UserRepository } from 'src/domain/repositories/user.repository';
+import type { UserRepository } from '@domain/user/user.repository';
 
 @Injectable()
 export class AuthenticateUserUseCase {

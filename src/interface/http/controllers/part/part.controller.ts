@@ -8,13 +8,16 @@ import {
   Delete,
   NotFoundException,
   UseGuards,
+  HttpCode,
+  HttpStatus,
+  Query,
 } from '@nestjs/common';
-import { CreatePartUseCase } from 'src/application/usecases/part/create-part.usecase';
-import { UpdatePartUseCase } from 'src/application/usecases/part/update-part.usecase';
-import { DeletePartUseCase } from 'src/application/usecases/part/delete-part.usecase';
-import { FindPartUseCase } from 'src/application/usecases/part/find-part.usecase';
-import { FindAllPartsUseCase } from 'src/application/usecases/part/find-all-parts.usecase';
-import { PartPresenter } from '../presenters/part.presenter';
+import { CreatePartUseCase } from '@application/part/create/create-part.usecase';
+import { UpdatePartUseCase } from '@application/part/update/update-part.usecase';
+import { DeletePartUseCase } from '@application/part/delete/delete-part.usecase';
+import { FindPartUseCase } from '@application/part/find/find-part.usecase';
+import { ListPartUseCase } from '@application/part/list/list-part.usecase';
+import { PartPresenter } from './part.presenter';
 import { JwtAuthGuard } from '@infrastructure/auth/jwt.guard';
 
 @Controller('parts')
@@ -24,7 +27,7 @@ export class PartController {
     private updatePart: UpdatePartUseCase,
     private deletePart: DeletePartUseCase,
     private findPart: FindPartUseCase,
-    private findAllParts: FindAllPartsUseCase,
+    private listPart: ListPartUseCase,
   ) {}
 
   @Post()
@@ -42,17 +45,31 @@ export class PartController {
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(JwtAuthGuard)
   async delete(@Param('id') id: string) {
     await this.deletePart.execute({ id });
-    return { message: 'Deleted successfully' };
   }
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  async findAll() {
-    const parts = await this.findAllParts.execute();
-    return parts.map((part) => PartPresenter.toResponse(part));
+  async findAll(
+    @Query('page') page?: string,
+    @Query('pageSize') pageSize?: string,
+  ) {
+    const pageNum = page ? parseInt(page, 10) : undefined;
+    const pageSizeNum = pageSize ? parseInt(pageSize, 10) : undefined;
+
+    const result = await this.listPart.execute({
+      page: pageNum,
+      pageSize: pageSizeNum,
+    });
+    const data = result.data.map((part) => PartPresenter.toResponse(part));
+
+    return {
+      data,
+      meta: result.meta,
+    };
   }
 
   @Get(':id')

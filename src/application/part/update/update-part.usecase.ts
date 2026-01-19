@@ -1,6 +1,7 @@
-import { Part } from 'src/domain/entities/part.entity';
-import type { PartRepository } from 'src/domain/repositories/part.repository';
+import { Part } from '@domain/part/part.entity';
+import type { PartRepository } from '@domain/part/part.repository';
 import { Inject, Injectable } from '@nestjs/common';
+import { NotFoundError } from '@shared/errors/not-found.error';
 
 interface UpdatePartInput {
   id: string;
@@ -12,18 +13,20 @@ interface UpdatePartInput {
 
 @Injectable()
 export class UpdatePartUseCase {
-  constructor(@Inject('PartRepository') private repo: PartRepository) {}
+  constructor(
+    @Inject('PartRepository') private partRepository: PartRepository,
+  ) {}
 
   async execute(input: UpdatePartInput): Promise<Part> {
-    const part = await this.repo.findById(input.id);
-    if (!part) throw new Error('Part not found');
+    const part = await this.partRepository.findById(input.id);
+    if (!part) throw new NotFoundError('Part');
 
     if (input.name) part.changeName(input.name);
     if (input.sku) part.changeSku(input.sku);
     if (input.price !== undefined) part.changePrice(input.price);
     if (input.quantity !== undefined) part.changeQuantity(input.quantity);
 
-    await this.repo.update(part);
+    await this.partRepository.update(part);
     return part;
   }
 }

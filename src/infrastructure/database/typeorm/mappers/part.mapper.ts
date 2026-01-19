@@ -1,4 +1,4 @@
-import { Part } from 'src/domain/entities/part.entity';
+import { Part } from '@domain/part/part.entity';
 import { PartOrm } from '../entities/part.orm';
 
 export class PartMapper {

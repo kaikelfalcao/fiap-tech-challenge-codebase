@@ -1,4 +1,4 @@
-import { Part } from '../part.entity';
+import { Part } from './part.entity';
 
 describe('Part entity', () => {
   it('should create a valid part with default quantity', () => {

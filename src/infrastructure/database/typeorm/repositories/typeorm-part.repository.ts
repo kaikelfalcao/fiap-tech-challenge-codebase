@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Part } from 'src/domain/entities/part.entity';
+import { Part } from '@domain/part/part.entity';
 import { PartOrm } from '../entities/part.orm';
 import { PartMapper } from '../mappers/part.mapper';
-import { PartRepository } from 'src/domain/repositories/part.repository';
+import { PartRepository } from '@domain/part/part.repository';
 
 @Injectable()
 export class TypeOrmPartRepository implements PartRepository {
@@ -27,9 +27,17 @@ export class TypeOrmPartRepository implements PartRepository {
     return orm ? PartMapper.toEntity(orm) : null;
   }
 
-  async findAll(): Promise<Part[]> {
-    const ormList = await this.repo.find();
-    return ormList.map(PartMapper.toEntity);
+  async findAll(options?: { skip?: number; take?: number }): Promise<Part[]> {
+    const parts = await this.repo.find({
+      skip: options?.skip,
+      take: options?.take,
+      order: { createdAt: 'DESC' },
+    });
+    return parts.map(PartMapper.toEntity);
+  }
+
+  async count(): Promise<number> {
+    return this.repo.count();
   }
 
   async update(part: Part): Promise<void> {

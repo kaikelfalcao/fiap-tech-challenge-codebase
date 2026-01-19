@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { PartRepository } from 'src/domain/repositories/part.repository';
+import { InvalidInputError } from '@shared/errors/invalid-input.error';
+import type { PartRepository } from '@domain/part/part.repository';
 
 export interface ReturnPartInput {
   partId: string;
@@ -16,9 +17,9 @@ export interface ReturnPartOutput {
 }
 
 @Injectable()
-export class ReturnPartsUseCase {
+export class ReturnPartUseCase {
   constructor(
-    @Inject('PartRepository') private readonly repository: PartRepository,
+    @Inject('PartRepository') private readonly partRepository: PartRepository,
   ) {}
 
   async execute(parts: ReturnPartInput[]): Promise<ReturnPartOutput> {
@@ -26,14 +27,14 @@ export class ReturnPartsUseCase {
     let totalValue = 0;
 
     for (const item of parts) {
-      const part = await this.repository.findById(item.partId);
+      const part = await this.partRepository.findById(item.partId);
       if (!part) {
-        throw new Error(`Peça ${item.partId} não encontrada`);
+        throw new InvalidInputError(`Peça ${item.partId} não encontrada`);
       }
 
       part.changeQuantity(part.quantity + item.quantity);
 
-      await this.repository.update(part);
+      await this.partRepository.update(part);
 
       processed.push({
         partId: part.id,

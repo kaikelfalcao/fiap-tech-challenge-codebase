@@ -2,7 +2,7 @@ import type { ServiceOrderRepository } from 'src/domain/repositories/service-ord
 import { ServiceOrder } from 'src/domain/entities/service-order.entity';
 import { FindCustomerUseCase } from '../../customer/find/find-customer.usecase';
 import { FindVehicleUseCase } from '../../vehicle/find/find-vehicle.usecase';
-import { ReservePartsUseCase } from '../part/reserve-part.usecase';
+import { ReservePartUseCase } from '../../part/reserve/reserve-part.usecase';
 import { CalculateRepairCostsUseCase } from '../../repair/calculate-repair-cost/calculate-repair-cost.usecase';
 import { Inject, Injectable } from '@nestjs/common';
 
@@ -18,7 +18,7 @@ export class CreateServiceOrderUseCase {
   constructor(
     private readonly findCustomerUseCase: FindCustomerUseCase,
     private readonly findVehicleUseCase: FindVehicleUseCase,
-    private readonly reservePartsUseCase: ReservePartsUseCase,
+    private readonly ReservePartUseCase: ReservePartUseCase,
     private readonly CalculateRepairCostsUseCase: CalculateRepairCostsUseCase,
     @Inject('ServiceOrderRepository')
     private readonly repository: ServiceOrderRepository,
@@ -43,7 +43,7 @@ export class CreateServiceOrderUseCase {
 
     if (input.parts?.length) {
       const { processed: processedParts } =
-        await this.reservePartsUseCase.execute(input.parts);
+        await this.ReservePartUseCase.execute(input.parts);
       processedParts.forEach((p) =>
         order.assignPart(p.partId, p.quantity, p.priceAtTime),
       );

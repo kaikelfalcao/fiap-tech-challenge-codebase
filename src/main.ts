@@ -1,9 +1,10 @@
 import 'dotenv/config';
+import 'tsconfig-paths/register';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ConfigService } from './infra/config/config.service';
-import { GlobalExceptionFilter } from './infra/nestjs/filters/global-exception.filter';
-import { LoggingInterceptor } from './infra/nestjs/interceptors/logging.interceptor';
+import { ConfigService } from './infrastructure/config/config.service';
+import { GlobalExceptionFilter } from './interface/http/filters/global-exception.filter';
+import { LoggingInterceptor } from './interface/http/interceptors/logging.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

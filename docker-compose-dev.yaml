@@ -1,4 +1,15 @@
 services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
   db:
     image: postgres:16
     container_name: tech-challenge-postgres

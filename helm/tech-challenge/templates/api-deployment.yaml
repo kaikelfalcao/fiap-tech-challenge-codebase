@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: {{ .Values.app.name }}
 spec:
+  replicas: {{ .Values.app.replicas }}
   selector:
     matchLabels:
       app: {{ .Values.app.name }}
@@ -17,10 +18,15 @@ spec:
           imagePullPolicy: {{ .Values.app.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.service.port }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.app.name }}-config
+            - secretRef:
+                name: {{ .Values.app.name }}-secrets
           readinessProbe:
             httpGet:
               path: {{ .Values.probes.readiness.path }}
-              port: 3000
+              port: {{ .Values.service.port }}
             initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds }}
             periodSeconds: {{ .Values.probes.readiness.periodSeconds }}
             timeoutSeconds: {{ .Values.probes.readiness.timeoutSeconds }}
@@ -28,16 +34,11 @@ spec:
           livenessProbe:
             httpGet:
               path: {{ .Values.probes.liveness.path }}
-              port: 3000
+              port: {{ .Values.service.port }}
             initialDelaySeconds: {{ .Values.probes.liveness.initialDelaySeconds }}
             periodSeconds: {{ .Values.probes.liveness.periodSeconds }}
             timeoutSeconds: {{ .Values.probes.liveness.timeoutSeconds }}
             failureThreshold: {{ .Values.probes.liveness.failureThreshold }}
-          envFrom:
-            - configMapRef:
-                name: {{ .Values.app.name }}-config
-            - secretRef:
-                name: {{ .Values.app.name }}-secrets
           resources:
             requests:
               cpu: {{ .Values.app.resources.requests.cpu }}

@@ -3,6 +3,10 @@ kind: ConfigMap
 metadata:
   name: {{ .Values.app.name }}-config
 data:
-{{- range $key, $value := .Values.env }}
-  {{ $key }}: "{{ $value }}"
-{{- end }}
+  DATABASE_HOST: {{ .Values.env.DATABASE_HOST }}
+  DATABASE_PORT: "{{ .Values.env.DATABASE_PORT }}"
+  DATABASE_USER: {{ .Values.env.DATABASE_USER }}
+  DATABASE_NAME: {{ .Values.env.DATABASE_NAME }}
+  APP_PORT: "{{ .Values.env.APP_PORT }}"
+  NODE_ENV: {{ .Values.env.NODE_ENV }}
+  JWT_EXPIRES_IN: {{ .Values.env.JWT_EXPIRES_IN }}

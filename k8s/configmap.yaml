@@ -3,12 +3,10 @@ kind: ConfigMap
 metadata:
   name: api-config
 data:
-  POSTGRES_HOST: postgres
-  POSTGRES_PORT: "5432"
-  POSTGRES_USER: app
-  POSTGRES_DB: app
-
+  DATABASE_HOST: postgres
+  DATABASE_PORT: "5432"
+  DATABASE_USER: app
+  DATABASE_NAME: app
   APP_PORT: "3000"
   NODE_ENV: development
-
   JWT_EXPIRES_IN: 1d

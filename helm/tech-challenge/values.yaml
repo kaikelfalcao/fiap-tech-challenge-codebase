@@ -10,8 +10,8 @@ app:
   replicas: 2
   resources:
     requests:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 200m
+      memory: 256Mi
     limits:
       cpu: 300m
       memory: 256Mi
@@ -45,16 +45,17 @@ resources:
     memory: "256Mi"
 
 env:
-  POSTGRES_HOST: postgres
-  POSTGRES_PORT: "5432"
-  POSTGRES_DB: app
-  POSTGRES_USER: app
+  DATABASE_HOST: postgres
+  DATABASE_PORT: "5432"
+  DATABASE_NAME: app
+  DATABASE_USER: app
   APP_PORT: "3000"
   NODE_ENV: development
   JWT_EXPIRES_IN: 1d
 
 secrets:
   POSTGRES_PASSWORD: app
+  DATABASE_PASSWORD: app
   JWT_SECRET: tech-challenge
 
 # =========================
@@ -74,7 +75,7 @@ postgres:
   password: app
 
   persistence:
-    enabled: true
+    enabled: false
     size: 1Gi
 
 hpa:

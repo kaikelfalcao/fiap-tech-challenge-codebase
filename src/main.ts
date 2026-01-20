@@ -6,8 +6,10 @@ import { ConfigService } from './infrastructure/config/config.service';
 import { GlobalExceptionFilter } from './interface/http/filters/global-exception.filter';
 import { LoggingInterceptor } from './interface/http/interceptors/logging.interceptor';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
+  const logger = new Logger('Bootstrap');
   const app = await NestFactory.create(AppModule);
   const config = app.get(ConfigService);
   app.setGlobalPrefix('api');
@@ -43,5 +45,6 @@ Esta API permite:
     },
   });
   await app.listen(config.app.port);
+  logger.log(`Swagger Docs on :${config.app.port}/docs`);
 }
 bootstrap();

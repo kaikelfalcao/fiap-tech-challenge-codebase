@@ -1,20 +1,16 @@
 import http from 'k6/http';
-import { sleep, check } from 'k6';
-import { Trend, Rate } from 'k6/metrics';
+import { sleep } from 'k6';
 
 export const options = {
   stages: [
-    { duration: '30s', target: 5 }, // warm-up
-    { duration: '45s', target: 20 }, // rampa leve
-    { duration: '45s', target: 30 }, // carga moderada
-    { duration: '30s', target: 0 }, // ramp-down
+    { duration: '15s', target: 10 },
+    { duration: '35s', target: 35 },
+    { duration: '25s', target: 50 },
+    { duration: '15s', target: 25 },
   ],
 };
 
 const BASE_URL = __ENV.BASE_URL;
-
-const latencyTrend = new Trend('register_latency');
-const errorRate = new Rate('register_errors');
 
 export default function () {
   const username = `user_${__VU}_${__ITER}_${Date.now()}`;

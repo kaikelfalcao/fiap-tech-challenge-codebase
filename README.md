@@ -18,6 +18,8 @@ O domínio contempla:
 
 Inclui autenticação JWT, banco relacional com TypeORM, execução local via Docker e deploy em Kubernetes com escalabilidade automática.
 
+![Arquitetura do Projeto](./docs/arq-view.jpeg)
+
 ## 🎯 Objetivos da Fase 2
 
 - Refatoração com Clean Architecture  

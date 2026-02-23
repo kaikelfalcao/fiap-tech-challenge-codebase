@@ -1,3 +1,4 @@
+version: "3.8"
 services:
   api:
     build:
@@ -5,11 +6,17 @@ services:
       dockerfile: Dockerfile
     env_file:
       - .env
+    environment:
+      NEW_RELIC_LICENSE_KEY: ${NEW_RELIC_LICENSE_KEY}
+      NODE_ENV: development
     ports:
       - "3000:3000"
+    secrets:
+      - newrelic_license_key
     depends_on:
       db:
         condition: service_healthy
+
   db:
     image: postgres:16
     container_name: tech-challenge-postgres
@@ -20,12 +27,16 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/dat  
+      - pgdata:/var/lib/postgresql/dat
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
       interval: 5s
       timeout: 5s
       retries: 5
+
+secrets:
+  newrelic_license_key:
+    file: ./secrets/newrelic.key
 
 volumes:
   pgdata:

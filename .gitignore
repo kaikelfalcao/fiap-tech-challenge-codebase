@@ -19,6 +19,7 @@ lerna-debug.log*
 .env.development
 .env.test
 .env.production
+.env.local
 
 # temp directory
 .temp
@@ -72,3 +73,9 @@ terraform.rc
 # Optional: ignore plan files saved before destroying Terraform configuration
 # Uncomment the line below if you want to ignore planout files.
 # planout
+
+# Secrets locais
+secrets/
+secrets/*
+
+

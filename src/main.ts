@@ -1,20 +1,24 @@
+import 'newrelic';
 import 'dotenv/config';
 import 'tsconfig-paths/register';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from './infrastructure/config/config.service';
 import { GlobalExceptionFilter } from './interface/http/filters/global-exception.filter';
-import { LoggingInterceptor } from './interface/http/interceptors/logging.interceptor';
+import { AdvancedLoggingInterceptor } from './interface/http/interceptors/advanced-logging.interceptor';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { Logger } from '@nestjs/common';
+import { logger as winstonLogger } from './infrastructure/logging/logger';
 
 async function bootstrap() {
-  const logger = new Logger('Bootstrap');
   const app = await NestFactory.create(AppModule);
   const config = app.get(ConfigService);
+
+  app.useLogger(winstonLogger);
+
   app.setGlobalPrefix('api');
+
   app.useGlobalFilters(new GlobalExceptionFilter());
-  app.useGlobalInterceptors(new LoggingInterceptor());
+  app.useGlobalInterceptors(new AdvancedLoggingInterceptor());
 
   const configSwagger = new DocumentBuilder()
     .setTitle('Tech Challenge – Service Order API')
@@ -44,7 +48,17 @@ Esta API permite:
       persistAuthorization: true,
     },
   });
+
   await app.listen(config.app.port);
-  logger.log(`Swagger Docs on :${config.app.port}/docs`);
+  winstonLogger.info(
+    `🚀 Application started successfully on port ${config.app.port}`,
+  );
+  winstonLogger.info(
+    `📚 Swagger Docs available at http://localhost:${config.app.port}/docs`,
+  );
+  winstonLogger.info('🔗 New Relic Logs integration enabled');
 }
-bootstrap();
+bootstrap().catch((err) => {
+  winstonLogger.error('Failed to start application:', err);
+  process.exit(1);
+});

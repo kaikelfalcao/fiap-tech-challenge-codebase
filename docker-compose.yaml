@@ -1,7 +1,10 @@
 services:
 
   api:
-    image: kaikelfalcao/tech-challenge-api-fase-2
+    platform: linux/arm64
+    build:
+      context: .
+      dockerfile: Dockerfile
     env_file: .env
     container_name: tech-challenge-api
     ports:
@@ -10,6 +13,7 @@ services:
       db:
         condition: service_healthy
   db:
+    platform: linux/arm64
     image: postgres:16
     container_name: tech-challenge-postgres
     environment:
@@ -19,7 +23,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/dat  
+      - pgdata:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
       interval: 5s

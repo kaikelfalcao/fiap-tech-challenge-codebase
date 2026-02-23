@@ -8,10 +8,12 @@ import { ServiceOrderModule } from '@interface/http/controllers/service-order/se
 import { AuthModule } from '@infrastructure/auth/auth.module';
 import { HealthModule } from '@interface/http/controllers/health/health.module';
 import { CustomerModule } from '@interface/http/controllers/customer/customer.module';
+import { LoggingModule } from '@infrastructure/logging/logging.module';
 
 @Module({
   imports: [
     ConfigModule,
+    LoggingModule,
     DatabaseModule,
     CustomerModule,
     VehicleModule,

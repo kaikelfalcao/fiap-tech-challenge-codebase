@@ -21,12 +21,9 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@application/*": ["src/application/*"],
-      "@domain/*": ["src/domain/*"],
-      "@infrastructure/*": ["src/infrastructure/*"],
-      "@interface/*": ["src/interface/*"],
-      "@shared/*": ["src/shared/*"]
-    },
-    "baseUrl": "./" //Remover
+      "@/*": [
+        "./src/*"
+      ]
+    }
   }
 }

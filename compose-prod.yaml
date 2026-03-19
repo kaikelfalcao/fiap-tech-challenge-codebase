@@ -1,0 +1,51 @@
+services:
+  database:
+    image: postgres:16-alpine
+    container_name: autoflow-db
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER}']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: autoflow-api
+    restart: unless-stopped
+
+    depends_on:
+      database:
+        condition: service_healthy
+
+    environment:
+      NODE_ENV: production
+      PORT: ${PORT}
+
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      DB_NAME: ${DB_NAME}
+
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN}
+
+    ports:
+      - '3000:3000'
+
+    command: ['node', 'dist/src/main.js']
+
+volumes:
+  postgres_data:

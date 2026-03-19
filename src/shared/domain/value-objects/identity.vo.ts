@@ -5,9 +5,9 @@ import { ValueObject } from '../value-object';
 export class Identity extends ValueObject {
   private readonly _id: string;
 
-  private constructor(uuid: string) {
+  protected constructor(uuid: string) {
     super();
-    if (v4Validate(uuid)) {
+    if (!v4Validate(uuid)) {
       throw new Error(`Invalid UUID: ${uuid}`);
     }
     this._id = uuid;

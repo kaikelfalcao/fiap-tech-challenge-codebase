@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { CustomerModule } from './modules/customer/customer.module';
+import { VehicleModule } from './modules/vehicle/vehicle.module';
 import appConfig from './shared/infrastructure/config/app.config';
 import authConfig from './shared/infrastructure/config/auth.config';
 import databaseConfig from './shared/infrastructure/config/database.config';
@@ -51,6 +53,8 @@ import { envSchema } from './shared/infrastructure/config/env.schema';
         };
       },
     }),
+    CustomerModule,
+    VehicleModule,
   ],
 })
 export class AppModule {}

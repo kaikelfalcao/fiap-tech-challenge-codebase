@@ -6,10 +6,14 @@ export default {
   testRegex: '.*\\.spec\\.ts$',
   testPathIgnorePatterns: ['/dist/'],
 
+  fakeTimers: { enableGlobally: true },
+
   transform: {
     '^.+\\.(t|j)s$': 'ts-jest',
   },
-
+  // highlight-start
+  transformIgnorePatterns: ['/node_modules/(?!(uuid)/)'],
+  // highlight-end
   moduleNameMapper: {
     '^src/(.*)$': '<rootDir>/src/$1',
 

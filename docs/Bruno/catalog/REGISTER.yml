@@ -1,0 +1,25 @@
+info:
+  name: REGISTER
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{BASE_URL}}/catalog/services"
+  body:
+    type: json
+    data: |-
+      {
+        "code": "MEC001",
+        "name": "Troca de Óleo",
+        "description": "Substituição do óleo do motor e filtro de óleo",
+        "basePriceCents": 12000,
+        "estimatedDurationMinutes": 40
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

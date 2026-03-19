@@ -1,0 +1,28 @@
+info:
+  name: UPDATE
+  type: http
+  seq: 3
+
+http:
+  method: PATCH
+  url: "{{BASE_URL}}/catalog/services/:id"
+  params:
+    - name: id
+      value: 13e18362-8a63-445e-af96-1afc8a03b078
+      type: path
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Troca de Óleo Completa",
+        "description": "Troca de óleo com verificação de filtros e nível de fluidos",
+        "basePriceCents": 15000,
+        "estimatedDurationMinutes": 60
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

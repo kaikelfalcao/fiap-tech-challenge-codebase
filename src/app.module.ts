@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { CatalogModule } from './modules/catalog/catalog.module';
 import { CustomerModule } from './modules/customer/customer.module';
 import { InventoryModule } from './modules/inventory/inventory.module';
 import { VehicleModule } from './modules/vehicle/vehicle.module';
@@ -57,6 +58,7 @@ import { envSchema } from './shared/infrastructure/config/env.schema';
     CustomerModule,
     VehicleModule,
     InventoryModule,
+    CatalogModule,
   ],
 })
 export class AppModule {}

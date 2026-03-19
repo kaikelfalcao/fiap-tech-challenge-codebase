@@ -1,0 +1,27 @@
+info:
+  name: UPDATE
+  type: http
+  seq: 4
+
+http:
+  method: PATCH
+  url: "{{BASE_URL}}/inventory/items/:id"
+  params:
+    - name: id
+      value: 7c31063f-35a8-4e33-8553-46abb710f877
+      type: path
+  body:
+    type: json
+    data: |-
+      {
+          "name": "Filtro de óleo premium",
+          "unit": "CX",
+          "unitPriceCents": 4500
+        }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,26 @@
+info:
+  name: REGISTER
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{BASE_URL}}/inventory/items"
+  body:
+    type: json
+    data: |-
+      {
+          "code": "PART-001",
+          "name": "Filtro de óleo",
+          "type": "PART",
+          "unit": "UN",
+          "unitPriceCents": 3500,
+          "minimumStock": 5
+        }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

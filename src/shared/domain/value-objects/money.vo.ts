@@ -1,70 +1,45 @@
-import { ValueObject } from '../value-object';
+import { ValueObject } from '@/shared/domain/value-object';
 
 export class Money extends ValueObject {
-  private readonly cents: number;
+  private readonly _amount: number;
 
-  private constructor(cents: number) {
+  private constructor(amount: number) {
     super();
-    this.cents = cents;
+    this._amount = amount;
   }
 
-  public static zero(): Money {
-    return new Money(0);
-  }
-
-  public static from(value: number): Money {
-    if (value === null || value === undefined) {
-      throw new Error('Money value cannot be null or undefined');
+  static fromCents(cents: number): Money {
+    if (!Number.isInteger(cents) || cents < 0) {
+      throw new Error('Money amount must be a non-negative integer (cents)');
     }
-
-    if (Number.isNaN(value) || !Number.isFinite(value)) {
-      throw new Error('Money value must be a valid number');
-    }
-
-    const cents = Math.round(value * 100);
-
     return new Money(cents);
   }
 
-  private static fromCents(cents: number): Money {
+  static fromDecimal(decimal: number): Money {
+    if (decimal < 0) {
+      throw new Error('Money amount must be non-negative');
+    }
+    return new Money(Math.round(decimal * 100));
+  }
+
+  static restore(cents: number): Money {
     return new Money(cents);
   }
 
-  public add(other: Money): Money {
-    return Money.fromCents(this.cents + other.cents);
+  get cents(): number {
+    return this._amount;
+  }
+  get decimal(): number {
+    return this._amount / 100;
+  }
+  get formatted(): string {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(this.decimal);
   }
 
-  public subtract(other: Money): Money {
-    return Money.fromCents(this.cents - other.cents);
-  }
-
-  public multiply(factor: number): Money {
-    if (Number.isNaN(factor) || !Number.isFinite(factor)) {
-      throw new Error('Factor must be a valid number');
-    }
-
-    const result = Math.round(this.cents * factor);
-
-    return Money.fromCents(result);
-  }
-
-  public greaterThan(other: Money): boolean {
-    return this.cents > other.cents;
-  }
-
-  public lessThan(other: Money): boolean {
-    return this.cents < other.cents;
-  }
-
-  public equals(other: Money): boolean {
-    return this.cents === other.cents;
-  }
-
-  public get centsValue(): number {
-    return this.cents;
-  }
-
-  public get value(): number {
-    return this.cents / 100;
+  equals(other: Money): boolean {
+    return this._amount === other._amount;
   }
 }

@@ -1,0 +1,27 @@
+info:
+  name: CONSUME
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{BASE_URL}}/inventory/items/:id/stock/consume"
+  params:
+    - name: id
+      value: 49db3fcd-f8d1-4c39-b664-9119cd944227
+      type: path
+  body:
+    type: json
+    data: |-
+      {
+        "amount": 2,
+        "referenceId": "a1b2c3d4-9001-4000-8000-000000000001",
+        "note": "Consumo confirmado OS-001"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,29 @@
+info:
+  name: REMOVE ITEMS
+  type: http
+  seq: 7
+
+http:
+  method: DELETE
+  url: "{{BASE_URL}}/service-orders/:id/items/:itemId"
+  params:
+    - name: itemId
+      value: 49db3fcd-f8d1-4c39-b664-9119cd944227
+      type: path
+    - name: id
+      value: 2b07276e-ba34-4fb3-b53a-dc669ffb1003
+      type: path
+  body:
+    type: json
+    data: |-
+      {
+        "itemId": "49db3fcd-f8d1-4c39-b664-9119cd944227",
+        "quantity": 1
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

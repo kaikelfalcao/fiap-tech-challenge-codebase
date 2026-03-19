@@ -1,0 +1,22 @@
+info:
+  name: OPEN
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{BASE_URL}}/service-orders"
+  body:
+    type: json
+    data: |-
+      {
+        "customerTaxId": "529.982.247-25",
+        "vehicleLicensePlate": "ABC-1234"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

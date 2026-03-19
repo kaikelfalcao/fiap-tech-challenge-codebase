@@ -1,0 +1,25 @@
+info:
+  name: BUDGET RESPONSE
+  type: http
+  seq: 10
+
+http:
+  method: PATCH
+  url: "{{BASE_URL}}/service-orders/:id/budget-response"
+  params:
+    - name: id
+      value: 2b07276e-ba34-4fb3-b53a-dc669ffb1003
+      type: path
+  body:
+    type: json
+    data: |-
+      {
+        "approved": true
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

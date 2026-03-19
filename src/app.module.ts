@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CatalogModule } from './modules/catalog/catalog.module';
 import { CustomerModule } from './modules/customer/customer.module';
 import { InventoryModule } from './modules/inventory/inventory.module';
+import { ServiceOrderModule } from './modules/service-order/service-order.module';
 import { VehicleModule } from './modules/vehicle/vehicle.module';
 import appConfig from './shared/infrastructure/config/app.config';
 import authConfig from './shared/infrastructure/config/auth.config';
@@ -59,6 +60,7 @@ import { envSchema } from './shared/infrastructure/config/env.schema';
     VehicleModule,
     InventoryModule,
     CatalogModule,
+    ServiceOrderModule,
   ],
 })
 export class AppModule {}

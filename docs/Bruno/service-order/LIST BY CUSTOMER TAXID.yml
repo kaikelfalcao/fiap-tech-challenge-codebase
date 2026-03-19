@@ -1,0 +1,19 @@
+info:
+  name: LIST BY CUSTOMER TAXID
+  type: http
+  seq: 13
+
+http:
+  method: GET
+  url: "{{BASE_URL}}/service-orders/customer/:taxId"
+  params:
+    - name: taxId
+      value: 529.982.247-25
+      type: path
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

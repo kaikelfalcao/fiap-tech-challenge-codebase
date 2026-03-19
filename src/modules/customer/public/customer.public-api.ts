@@ -10,6 +10,7 @@ export interface CustomerView {
 
 export interface ICustomerPublicApi {
   getByTaxId(taxId: string): Promise<CustomerView | null>;
+  getById(customerId: string): Promise<CustomerView | null>;
 }
 
 export const CUSTOMER_PUBLIC_API = Symbol('ICustomerPublicApi');

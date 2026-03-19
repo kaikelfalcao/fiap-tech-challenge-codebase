@@ -1,0 +1,28 @@
+info:
+  name: UPDATE
+  type: http
+  seq: 3
+
+http:
+  method: PATCH
+  url: "{{BASE_URL}}/vehicles/:id"
+  params:
+    - name: id
+      value: 77d710f2-6b5b-4e00-86d1-a21b56ef9fda
+      type: path
+  body:
+    type: json
+    data: |-
+      {
+          "brand": "Toyota",
+          "model": "Corolla Cross",
+          "year": 2023,
+          "licensePlate": "DEF-5678"
+        }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

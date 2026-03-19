@@ -1,0 +1,19 @@
+info:
+  name: DELETE
+  type: http
+  seq: 5
+
+http:
+  method: DELETE
+  url: "{{BASE_URL}}/vehicles/:id"
+  params:
+    - name: id
+      value: 77d710f2-6b5b-4e00-86d1-a21b56ef9fda
+      type: path
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

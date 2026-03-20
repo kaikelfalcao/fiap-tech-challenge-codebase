@@ -32,6 +32,8 @@ import { RegisterItemDto } from './dtos/register-item.dto';
 import { ReserveStockDto } from './dtos/reserve-stock.dto';
 import { UpdateItemDto } from './dtos/update-item.dto';
 
+import { RequireRoles } from '@/modules/iam/infrastructure/decorators/roles.decorator';
+
 @Controller('inventory/items')
 export class InventoryController {
   constructor(
@@ -51,42 +53,47 @@ export class InventoryController {
   ) {}
 
   // --- Item CRUD ---
+  @RequireRoles('ADMIN')
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() dto: RegisterItemDto) {
     return this.registerItem.execute(dto);
   }
 
+  @RequireRoles('ADMIN')
   @Get()
   @HttpCode(HttpStatus.OK)
   async list(@Query() query: ListItemsDto) {
     return this.listItems.execute(query);
   }
-
+  @RequireRoles('ADMIN')
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async get(@Param('id') id: string) {
     return this.getItem.execute({ id });
   }
-
+  @RequireRoles('ADMIN')
   @Patch(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async update(@Param('id') id: string, @Body() dto: UpdateItemDto) {
     return this.updateItem.execute({ id, ...dto });
   }
 
+  @RequireRoles('ADMIN')
   @Patch(':id/activate')
   @HttpCode(HttpStatus.NO_CONTENT)
   async activate(@Param('id') id: string) {
     return this.activateItem.execute({ id });
   }
 
+  @RequireRoles('ADMIN')
   @Patch(':id/deactivate')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deactivate(@Param('id') id: string) {
     return this.deactivateItem.execute({ id });
   }
 
+  @RequireRoles('ADMIN')
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string) {
@@ -94,36 +101,42 @@ export class InventoryController {
   }
 
   // --- Stock Operations ---
+  @RequireRoles('ADMIN')
   @Post(':id/stock/add')
   @HttpCode(HttpStatus.NO_CONTENT)
   async add(@Param('id') itemId: string, @Body() dto: AddStockDto) {
     return this.addStock.execute({ itemId, ...dto });
   }
 
+  @RequireRoles('ADMIN')
   @Post(':id/stock/reserve')
   @HttpCode(HttpStatus.NO_CONTENT)
   async reserve(@Param('id') itemId: string, @Body() dto: ReserveStockDto) {
     return this.reserveStock.execute({ itemId, ...dto });
   }
 
+  @RequireRoles('ADMIN')
   @Post(':id/stock/release')
   @HttpCode(HttpStatus.NO_CONTENT)
   async release(@Param('id') itemId: string, @Body() dto: ReserveStockDto) {
     return this.releaseStock.execute({ itemId, ...dto });
   }
 
+  @RequireRoles('ADMIN')
   @Post(':id/stock/consume')
   @HttpCode(HttpStatus.NO_CONTENT)
   async consume(@Param('id') itemId: string, @Body() dto: ReserveStockDto) {
     return this.consumeStock.execute({ itemId, ...dto });
   }
 
+  @RequireRoles('ADMIN')
   @Post(':id/stock/adjust')
   @HttpCode(HttpStatus.NO_CONTENT)
   async adjust(@Param('id') itemId: string, @Body() dto: AdjustStockDto) {
     return this.adjustStock.execute({ itemId, ...dto });
   }
 
+  @RequireRoles('ADMIN')
   @Get(':id/stock/movements')
   @HttpCode(HttpStatus.OK)
   async movements(@Param('id') itemId: string) {

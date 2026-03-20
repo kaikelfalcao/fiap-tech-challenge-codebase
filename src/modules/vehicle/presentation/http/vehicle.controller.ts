@@ -25,6 +25,8 @@ import type {
   PaginatedVehiclesResponseDto,
 } from './dtos/vehicle.response.dto';
 
+import { RequireRoles } from '@/modules/iam/infrastructure/decorators/roles.decorator';
+
 @Controller('vehicles')
 export class VehicleController {
   constructor(
@@ -35,12 +37,14 @@ export class VehicleController {
     private readonly listVehicles: ListVehiclesUseCase,
   ) {}
 
+  @RequireRoles('ADMIN')
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() dto: RegisterVehicleDto): Promise<{ id: string }> {
     return this.registerVehicle.execute(dto);
   }
 
+  @RequireRoles('ADMIN')
   @Get()
   @HttpCode(HttpStatus.OK)
   async list(
@@ -49,12 +53,14 @@ export class VehicleController {
     return this.listVehicles.execute(query);
   }
 
+  @RequireRoles('ADMIN')
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async get(@Param('id') id: string): Promise<VehicleResponseDto> {
     return this.getVehicle.execute({ id });
   }
 
+  @RequireRoles('ADMIN')
   @Patch(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async update(
@@ -64,6 +70,7 @@ export class VehicleController {
     return this.updateVehicle.execute({ id, ...dto });
   }
 
+  @RequireRoles('ADMIN')
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string): Promise<void> {

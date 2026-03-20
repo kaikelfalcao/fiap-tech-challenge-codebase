@@ -33,6 +33,9 @@ import { ApproveBudgetDto } from './dtos/approve-budget.dto';
 import { ListServiceOrdersDto } from './dtos/list-service-orders.dto';
 import { OpenServiceOrderDto } from './dtos/open-service-order.dto';
 
+import { Public } from '@/modules/iam/infrastructure/decorators/public.decorator';
+import { RequireRoles } from '@/modules/iam/infrastructure/decorators/roles.decorator';
+
 @Controller('service-orders')
 export class ServiceOrderController {
   constructor(
@@ -55,18 +58,21 @@ export class ServiceOrderController {
 
   // --- CRUD principal ---
 
+  @RequireRoles('ADMIN')
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async open(@Body() dto: OpenServiceOrderDto) {
     return this.openOrder.execute(dto);
   }
 
+  @RequireRoles('ADMIN')
   @Get()
   @HttpCode(HttpStatus.OK)
   async list(@Query() query: ListServiceOrdersDto) {
     return this.listOrders.execute(query);
   }
 
+  @RequireRoles('ADMIN')
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async get(@Param('id') id: string) {
@@ -75,6 +81,7 @@ export class ServiceOrderController {
 
   // --- Serviços na OS ---
 
+  @RequireRoles('ADMIN')
   @Post(':id/services')
   @HttpCode(HttpStatus.NO_CONTENT)
   async addServiceToOrder(
@@ -84,6 +91,7 @@ export class ServiceOrderController {
     return this.addService.execute({ orderId, ...dto });
   }
 
+  @RequireRoles('ADMIN')
   @Delete(':id/services/:serviceId')
   @HttpCode(HttpStatus.NO_CONTENT)
   async removeServiceFromOrder(
@@ -95,12 +103,14 @@ export class ServiceOrderController {
 
   // --- Itens na OS ---
 
+  @RequireRoles('ADMIN')
   @Post(':id/items')
   @HttpCode(HttpStatus.NO_CONTENT)
   async addItemToOrder(@Param('id') orderId: string, @Body() dto: AddItemDto) {
     return this.addItem.execute({ orderId, ...dto });
   }
 
+  @RequireRoles('ADMIN')
   @Delete(':id/items/:itemId')
   @HttpCode(HttpStatus.NO_CONTENT)
   async removeItemFromOrder(
@@ -112,18 +122,21 @@ export class ServiceOrderController {
 
   // --- Transições de status ---
 
+  @RequireRoles('ADMIN')
   @Patch(':id/start-diagnosis')
   @HttpCode(HttpStatus.NO_CONTENT)
   async startDiagnosisRoute(@Param('id') orderId: string) {
     return this.startDiagnosis.execute({ orderId });
   }
 
+  @RequireRoles('ADMIN')
   @Patch(':id/send-budget')
   @HttpCode(HttpStatus.NO_CONTENT)
   async sendBudgetRoute(@Param('id') orderId: string) {
     return this.sendBudget.execute({ orderId });
   }
 
+  @RequireRoles('ADMIN')
   @Patch(':id/budget-response')
   @HttpCode(HttpStatus.NO_CONTENT)
   async budgetResponse(
@@ -136,18 +149,21 @@ export class ServiceOrderController {
     return this.rejectBudget.execute({ orderId });
   }
 
+  @RequireRoles('ADMIN')
   @Patch(':id/finalize')
   @HttpCode(HttpStatus.NO_CONTENT)
   async finalize(@Param('id') orderId: string) {
     return this.finalizeOrder.execute({ orderId });
   }
 
+  @RequireRoles('ADMIN')
   @Patch(':id/deliver')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deliver(@Param('id') orderId: string) {
     return this.deliverOrder.execute({ orderId });
   }
 
+  @Public()
   @Get('customer/:taxId/:orderId')
   @HttpCode(HttpStatus.OK)
   async getByCustomer(
@@ -157,6 +173,7 @@ export class ServiceOrderController {
     return this.getOrderByCustomer.execute({ taxId, orderId });
   }
 
+  @Public()
   @Get('customer/:taxId')
   @HttpCode(HttpStatus.OK)
   async listByCustomer(

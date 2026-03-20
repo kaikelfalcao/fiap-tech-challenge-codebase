@@ -1,0 +1,24 @@
+info:
+  name: REGISTER
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{BASE_URL}}/iam/register"
+  body:
+    type: json
+    data: |-
+      {
+        "taxId": "064.145.555-09",
+        "name": "Kaike Falcao",
+        "password": "123kaike123",
+        "role": "ADMIN"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

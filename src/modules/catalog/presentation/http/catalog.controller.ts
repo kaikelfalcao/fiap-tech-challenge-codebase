@@ -25,6 +25,8 @@ import { ListServicesDto } from './dtos/list-services.dto';
 import { RegisterServiceDto } from './dtos/register-service.dto';
 import { UpdateServiceDto } from './dtos/update-service.dto';
 
+import { RequireRoles } from '@/modules/iam/infrastructure/decorators/roles.decorator';
+
 @Controller('catalog/services')
 export class CatalogController {
   constructor(
@@ -37,12 +39,14 @@ export class CatalogController {
     private readonly listServices: ListServicesUseCase,
   ) {}
 
+  @RequireRoles('ADMIN')
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() dto: RegisterServiceDto): Promise<{ id: string }> {
     return this.registerService.execute(dto);
   }
 
+  @RequireRoles('ADMIN')
   @Get()
   @HttpCode(HttpStatus.OK)
   async list(
@@ -51,12 +55,14 @@ export class CatalogController {
     return this.listServices.execute(query);
   }
 
+  @RequireRoles('ADMIN')
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async get(@Param('id') id: string): Promise<GetServiceOutput> {
     return this.getService.execute({ id });
   }
 
+  @RequireRoles('ADMIN')
   @Patch(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async update(
@@ -66,18 +72,21 @@ export class CatalogController {
     return this.updateService.execute({ id, ...dto });
   }
 
+  @RequireRoles('ADMIN')
   @Patch(':id/activate')
   @HttpCode(HttpStatus.NO_CONTENT)
   async activate(@Param('id') id: string): Promise<void> {
     return this.activateService.execute({ id });
   }
 
+  @RequireRoles('ADMIN')
   @Patch(':id/deactivate')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deactivate(@Param('id') id: string): Promise<void> {
     return this.deactivateService.execute({ id });
   }
 
+  @RequireRoles('ADMIN')
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string): Promise<void> {

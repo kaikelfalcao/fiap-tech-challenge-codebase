@@ -6,7 +6,9 @@ info:
 http:
   method: GET
   url: "{{BASE_URL}}/inventory/items"
-  auth: inherit
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjMzJkZGFlOC02MTJlLTRjNjAtOWY5Ny03Y2VmMjYyMzM0YmEiLCJ0YXhJZCI6IjA2NDE0NTU1NTA5IiwibmFtZSI6IkthaWtlIEZhbGNhbyIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3Mzk3MDg4NiwiZXhwIjoxNzc0MDU3Mjg2fQ.6ryeRP2vb5HxfMk6ikF9zHa3xTrGguATM5ZLxTT7q9w
 
 settings:
   encodeUrl: true

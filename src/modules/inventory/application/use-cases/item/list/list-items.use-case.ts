@@ -1,12 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { GetItemOutput } from '../get/get-item.use-case';
-
-import { PaginatedResult } from '@/modules/customer/domain/customer.repository';
 import {
   type IItemRepository,
   ITEM_REPOSITORY,
+  PaginatedResult,
 } from '@/modules/inventory/domain/item.repository';
+import {
+  type IStockRepository,
+  STOCK_REPOSITORY,
+} from '@/modules/inventory/domain/stock.repository';
 import { ItemType } from '@/modules/inventory/domain/value-objects/item-type.vo';
 
 export interface ListItemsInput {
@@ -16,30 +18,65 @@ export interface ListItemsInput {
   limit?: number;
 }
 
+export interface ListItemOutput {
+  id: string;
+  code: string;
+  name: string;
+  type: ItemType;
+  unit: string;
+  unitPriceCents: number;
+  unitPriceFormatted: string;
+  active: boolean;
+  stock: {
+    quantity: number;
+    reserved: number;
+    available: number;
+    minimum: number;
+    isBelowMinimum: boolean;
+  } | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 @Injectable()
 export class ListItemsUseCase {
   constructor(
     @Inject(ITEM_REPOSITORY) private readonly items: IItemRepository,
+    @Inject(STOCK_REPOSITORY) private readonly stocks: IStockRepository,
   ) {}
 
   async execute(
     input: ListItemsInput,
-  ): Promise<PaginatedResult<Omit<GetItemOutput, 'stock'>>> {
+  ): Promise<PaginatedResult<ListItemOutput>> {
     const result = await this.items.list(input);
-    return {
-      ...result,
-      data: result.data.map((item) => ({
-        id: item.id().value,
-        code: item.code.value,
-        name: item.name,
-        type: item.type,
-        unit: item.unit,
-        unitPriceCents: item.unitPrice.cents,
-        unitPriceFormatted: item.unitPrice.formatted,
-        active: item.active,
-        createdAt: item.createdAt,
-        updatedAt: item.updatedAt,
-      })),
-    };
+
+    const data = await Promise.all(
+      result.data.map(async (item) => {
+        const stock = await this.stocks.findByItemId(item.id().value);
+        return {
+          id: item.id().value,
+          code: item.code.value,
+          name: item.name,
+          type: item.type,
+          unit: item.unit,
+          unitPriceCents: item.unitPrice.cents,
+          unitPriceFormatted: item.unitPrice.formatted,
+          active: item.active,
+          stock: stock
+            ? {
+                quantity: stock.quantity,
+                reserved: stock.reserved,
+                available: stock.available,
+                minimum: stock.minimum,
+                isBelowMinimum: stock.isBelowMinimum,
+              }
+            : null,
+          createdAt: item.createdAt,
+          updatedAt: item.updatedAt,
+        };
+      }),
+    );
+
+    return { ...result, data };
   }
 }

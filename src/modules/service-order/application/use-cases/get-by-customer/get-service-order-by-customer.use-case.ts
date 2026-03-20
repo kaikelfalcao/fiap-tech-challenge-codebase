@@ -6,6 +6,7 @@ import {
 } from '../../../domain/service-order.repository';
 import { ServiceOrderId } from '../../../domain/value-objects/service-order-id.vo';
 import { SERVICE_ORDER_STATUS_LABEL } from '../../../domain/value-objects/service-order-status.vo';
+import { toServiceOrderOutput } from '../../helpers/service-order-output.mapper';
 import type { GetServiceOrderOutput } from '../get/get-service-order.use-case';
 
 import {
@@ -50,36 +51,6 @@ export class GetServiceOrderByCustomerUseCase {
       );
     }
 
-    return {
-      id: order.id().value,
-      customerId: order.customerId,
-      vehicleId: order.vehicleId,
-      status: order.status,
-      statusLabel: SERVICE_ORDER_STATUS_LABEL[order.status],
-      services: order.services.map((s) => ({
-        serviceId: s.serviceId,
-        name: s.name,
-        unitPriceCents: s.unitPriceCents,
-        quantity: s.quantity,
-        totalCents: s.totalCents,
-      })),
-      items: order.items.map((i) => ({
-        itemId: i.itemId,
-        name: i.name,
-        unitPriceCents: i.unitPriceCents,
-        quantity: i.quantity,
-        totalCents: i.totalCents,
-      })),
-      totalServicesCents: order.totalServicesCents,
-      totalItemsCents: order.totalItemsCents,
-      totalCents: order.totalCents,
-      budgetSentAt: order.budgetSentAt,
-      approvedAt: order.approvedAt,
-      rejectedAt: order.rejectedAt,
-      finalizedAt: order.finalizedAt,
-      deliveredAt: order.deliveredAt,
-      createdAt: order.createdAt,
-      updatedAt: order.updatedAt,
-    };
+    return toServiceOrderOutput(order);
   }
 }

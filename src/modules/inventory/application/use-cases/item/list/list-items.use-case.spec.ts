@@ -2,15 +2,19 @@ import type { ItemRepositoryMock } from '../../../helpers/item-repository.mock';
 import { makeItemRepositoryMock } from '../../../helpers/item-repository.mock';
 import {
   ITEM_UUID_2,
+  ITEM_UUID_3,
   makeItem,
   makeItemCode,
   makeItemId,
 } from '../../../helpers/item.factory';
+import type { StockRepositoryMock } from '../../../helpers/stock-repository.mock';
+import { makeStockRepositoryMock } from '../../../helpers/stock-repository.mock';
+import { makeStock } from '../../../helpers/stock.factory';
 
 import { ListItemsUseCase } from './list-items.use-case';
 
-import type { PaginatedResult } from '@/modules/customer/domain/customer.repository';
 import type { Item } from '@/modules/inventory/domain/item.entity';
+import type { PaginatedResult } from '@/modules/inventory/domain/item.repository';
 
 const makePaginatedResult = (
   data: Item[],
@@ -25,11 +29,14 @@ const makePaginatedResult = (
 
 describe('ListItemsUseCase', () => {
   let sut: ListItemsUseCase;
-  let repo: ItemRepositoryMock;
+  let itemRepo: ItemRepositoryMock;
+  let stockRepo: StockRepositoryMock;
 
   beforeEach(() => {
-    repo = makeItemRepositoryMock();
-    sut = new ListItemsUseCase(repo);
+    itemRepo = makeItemRepositoryMock();
+    stockRepo = makeStockRepositoryMock();
+    sut = new ListItemsUseCase(itemRepo, stockRepo);
+    stockRepo.findByItemId.mockResolvedValue(makeStock());
   });
 
   it('should return a paginated list of items', async () => {
@@ -37,7 +44,7 @@ describe('ListItemsUseCase', () => {
       makeItem(),
       makeItem({ id: makeItemId(ITEM_UUID_2), code: makeItemCode('PART-002') }),
     ];
-    repo.list.mockResolvedValue(makePaginatedResult(items));
+    itemRepo.list.mockResolvedValue(makePaginatedResult(items));
 
     const output = await sut.execute({});
 
@@ -49,7 +56,7 @@ describe('ListItemsUseCase', () => {
 
   it('should map each item to the output shape', async () => {
     const item = makeItem();
-    repo.list.mockResolvedValue(makePaginatedResult([item]));
+    itemRepo.list.mockResolvedValue(makePaginatedResult([item]));
 
     const output = await sut.execute({});
     const result = output.data[0];
@@ -65,12 +72,49 @@ describe('ListItemsUseCase', () => {
     expect(result.updatedAt).toBe(item.updatedAt);
   });
 
+  it('should return stock data for each item', async () => {
+    const item = makeItem();
+    const stock = makeStock({ quantity: 50, reserved: 10, minimum: 5 });
+    itemRepo.list.mockResolvedValue(makePaginatedResult([item]));
+    stockRepo.findByItemId.mockResolvedValue(stock);
+
+    const output = await sut.execute({});
+
+    expect(output.data[0].stock).not.toBeNull();
+    expect(output.data[0].stock?.quantity).toBe(50);
+    expect(output.data[0].stock?.reserved).toBe(10);
+    expect(output.data[0].stock?.available).toBe(40);
+    expect(output.data[0].stock?.minimum).toBe(5);
+    expect(output.data[0].stock?.isBelowMinimum).toBe(false);
+  });
+
+  it('should return stock = null when no stock exists for an item', async () => {
+    itemRepo.list.mockResolvedValue(makePaginatedResult([makeItem()]));
+    stockRepo.findByItemId.mockResolvedValue(null);
+
+    const output = await sut.execute({});
+
+    expect(output.data[0].stock).toBeNull();
+  });
+
+  it('should return isBelowMinimum = true when available <= minimum', async () => {
+    itemRepo.list.mockResolvedValue(makePaginatedResult([makeItem()]));
+    stockRepo.findByItemId.mockResolvedValue(
+      makeStock({ quantity: 5, reserved: 2, minimum: 5 }),
+    );
+
+    const output = await sut.execute({});
+
+    expect(output.data[0].stock?.available).toBe(3);
+    expect(output.data[0].stock?.isBelowMinimum).toBe(true);
+  });
+
   it('should forward filters to the repository', async () => {
-    repo.list.mockResolvedValue(makePaginatedResult([]));
+    itemRepo.list.mockResolvedValue(makePaginatedResult([]));
 
     await sut.execute({ type: 'SUPPLY', active: false, page: 2, limit: 10 });
 
-    expect(repo.list).toHaveBeenCalledWith({
+    expect(itemRepo.list).toHaveBeenCalledWith({
       type: 'SUPPLY',
       active: false,
       page: 2,
@@ -79,7 +123,7 @@ describe('ListItemsUseCase', () => {
   });
 
   it('should return empty list when no items exist', async () => {
-    repo.list.mockResolvedValue(makePaginatedResult([], { total: 0 }));
+    itemRepo.list.mockResolvedValue(makePaginatedResult([], { total: 0 }));
 
     const output = await sut.execute({});
 
@@ -88,7 +132,7 @@ describe('ListItemsUseCase', () => {
   });
 
   it('should preserve pagination metadata from repository', async () => {
-    repo.list.mockResolvedValue(
+    itemRepo.list.mockResolvedValue(
       makePaginatedResult([makeItem()], { total: 80, page: 4, limit: 10 }),
     );
 
@@ -100,15 +144,28 @@ describe('ListItemsUseCase', () => {
   });
 
   it('should include formatted unit price', async () => {
-    repo.list.mockResolvedValue(makePaginatedResult([makeItem()]));
+    itemRepo.list.mockResolvedValue(makePaginatedResult([makeItem()]));
 
     const output = await sut.execute({});
 
     expect(output.data[0].unitPriceFormatted).toContain('R$');
   });
 
+  it('should call findByItemId for each item returned', async () => {
+    const items = [
+      makeItem(),
+      makeItem({ id: makeItemId(ITEM_UUID_2), code: makeItemCode('PART-002') }),
+      makeItem({ id: makeItemId(ITEM_UUID_3), code: makeItemCode('PART-003') }),
+    ];
+    itemRepo.list.mockResolvedValue(makePaginatedResult(items));
+
+    await sut.execute({});
+
+    expect(stockRepo.findByItemId).toHaveBeenCalledTimes(3);
+  });
+
   it('should throw if repository throws', async () => {
-    repo.list.mockRejectedValue(new Error('Database error'));
+    itemRepo.list.mockRejectedValue(new Error('Database error'));
 
     await expect(sut.execute({})).rejects.toThrow('Database error');
   });

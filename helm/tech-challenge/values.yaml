@@ -62,11 +62,13 @@ secrets:
 # Configurações do Postgres
 # =========================
 postgres:
+  enabled: true
   name: postgres
 
   image:
     repository: postgres
     tag: "16"
+    pullPolicy: IfNotPresent
 
   port: 5432
 

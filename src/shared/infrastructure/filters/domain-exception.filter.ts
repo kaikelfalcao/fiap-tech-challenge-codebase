@@ -13,12 +13,15 @@ import { ConflictException } from '@/shared/domain/exceptions/conflict.exception
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { ValidationException } from '@/shared/domain/exceptions/validation.exception';
 
+const newrelic = require('newrelic');
+
 interface ErrorResponse {
   statusCode: number;
   error: string;
   message: string;
   timestamp: string;
   path: string;
+  requestId?: string;
 }
 
 @Catch(DomainException)
@@ -31,6 +34,7 @@ export class DomainExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
 
     const statusCode = this.resolveStatus(exception);
+    const requestId = (request as any).requestId;
 
     const body: ErrorResponse = {
       statusCode,
@@ -38,12 +42,21 @@ export class DomainExceptionFilter implements ExceptionFilter {
       message: exception.message,
       timestamp: new Date().toISOString(),
       path: request.url,
+      requestId,
     };
 
+    // Reportar ao New Relic apenas erros 5xx
     if (statusCode >= 500) {
-      this.logger.error(exception.message, exception.stack);
+      newrelic.noticeError(exception, {
+        requestId,
+        path: request.url,
+        method: request.method,
+      });
+      this.logger.error(exception.message, exception.stack, { requestId });
     } else {
-      this.logger.warn(`${exception.name}: ${exception.message}`);
+      this.logger.warn(`${exception.name}: ${exception.message}`, {
+        requestId,
+      });
     }
 
     response.status(statusCode).json(body);
@@ -62,7 +75,6 @@ export class DomainExceptionFilter implements ExceptionFilter {
     if (exception instanceof BusinessRuleException) {
       return HttpStatus.UNPROCESSABLE_ENTITY;
     }
-
     return HttpStatus.INTERNAL_SERVER_ERROR;
   }
 }

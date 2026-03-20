@@ -6,6 +6,7 @@ import {
   type CustomerApiMock,
   type VehicleApiMock,
 } from '../../helpers/external-apis.mock';
+import { makeMetricsMock, type MetricsMock } from '../../helpers/metrics.mock';
 import {
   makeSORepositoryMock,
   type SORepositoryMock,
@@ -31,12 +32,14 @@ describe('OpenServiceOrderUseCase', () => {
   let repo: SORepositoryMock;
   let customerApi: CustomerApiMock;
   let vehicleApi: VehicleApiMock;
+  let metrics: MetricsMock;
 
   beforeEach(() => {
     repo = makeSORepositoryMock();
     customerApi = makeCustomerApiMock();
     vehicleApi = makeVehicleApiMock();
-    sut = new OpenServiceOrderUseCase(repo, customerApi, vehicleApi);
+    metrics = makeMetricsMock();
+    sut = new OpenServiceOrderUseCase(repo, customerApi, vehicleApi, metrics);
   });
 
   it('should open a service order and return its id', async () => {
@@ -63,6 +66,25 @@ describe('OpenServiceOrderUseCase', () => {
     expect(saved.vehicleId).toBe(VEHICLE_UUID);
     expect(saved.services).toHaveLength(0);
     expect(saved.items).toHaveLength(0);
+  });
+
+  it('should record metric after saving the order', async () => {
+    customerApi.getByTaxId.mockResolvedValue(makeCustomerView());
+    vehicleApi.findByLicensePlate.mockResolvedValue(makeVehicleView());
+    repo.save.mockResolvedValue();
+
+    await sut.execute(makeInput());
+
+    expect(metrics.recordServiceOrderOpened).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not record metric if save throws', async () => {
+    customerApi.getByTaxId.mockResolvedValue(makeCustomerView());
+    vehicleApi.findByLicensePlate.mockResolvedValue(makeVehicleView());
+    repo.save.mockRejectedValue(new Error('Database error'));
+
+    await expect(sut.execute(makeInput())).rejects.toThrow('Database error');
+    expect(metrics.recordServiceOrderOpened).not.toHaveBeenCalled();
   });
 
   it('should throw NotFoundException if customer is not found', async () => {

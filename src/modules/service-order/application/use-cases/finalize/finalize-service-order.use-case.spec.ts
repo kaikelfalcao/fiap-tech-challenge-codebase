@@ -2,6 +2,7 @@ import {
   makeInventoryApiMock,
   type InventoryApiMock,
 } from '../../helpers/external-apis.mock';
+import { makeMetricsMock, type MetricsMock } from '../../helpers/metrics.mock';
 import {
   makeSORepositoryMock,
   type SORepositoryMock,
@@ -23,11 +24,13 @@ describe('FinalizeServiceOrderUseCase', () => {
   let sut: FinalizeServiceOrderUseCase;
   let repo: SORepositoryMock;
   let inventoryApi: InventoryApiMock;
+  let metrics: MetricsMock;
 
   beforeEach(() => {
     repo = makeSORepositoryMock();
     inventoryApi = makeInventoryApiMock();
-    sut = new FinalizeServiceOrderUseCase(repo, inventoryApi);
+    metrics = makeMetricsMock();
+    sut = new FinalizeServiceOrderUseCase(repo, inventoryApi, metrics);
   });
 
   it('should transition order from IN_EXECUTION to FINALIZED', async () => {
@@ -53,6 +56,25 @@ describe('FinalizeServiceOrderUseCase', () => {
     expect(order.finalizedAt).not.toBeNull();
     expect(order.finalizedAt!.getTime()).toBeGreaterThanOrEqual(
       before.getTime(),
+    );
+  });
+
+  it('should record finalization metrics', async () => {
+    const order = makeServiceOrderWithStatus('IN_EXECUTION');
+    repo.findById.mockResolvedValue(order);
+    inventoryApi.consumeStock.mockResolvedValue();
+    repo.update.mockResolvedValue();
+
+    await sut.execute({ orderId: SO_UUID_1 });
+
+    expect(metrics.recordServiceOrderFinalized).toHaveBeenCalledWith(
+      order.id().value,
+      expect.any(Number),
+    );
+    expect(metrics.recordServiceOrderStatusChanged).toHaveBeenCalledWith(
+      order.id().value,
+      'IN_EXECUTION',
+      'FINALIZED',
     );
   });
 

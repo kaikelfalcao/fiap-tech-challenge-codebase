@@ -1,11 +1,17 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import 'newrelic';
 
 import { AppModule } from './app.module';
-import { DomainExceptionFilter } from './shared/presentation/filters/domain-exception.filter';
+import { DomainExceptionFilter } from './shared/infrastructure/filters/domain-exception.filter';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+  });
+  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
+
   app.enableShutdownHooks();
   app.setGlobalPrefix('api');
 
@@ -19,6 +25,6 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(parseInt(process.env.PORT ?? '3000', 10));
+  await app.listen(process.env.PORT ?? 3000);
 }
 void bootstrap();

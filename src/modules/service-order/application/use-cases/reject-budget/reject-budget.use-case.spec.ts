@@ -1,3 +1,4 @@
+import { makeMetricsMock, type MetricsMock } from '../../helpers/metrics.mock';
 import {
   makeSORepositoryMock,
   type SORepositoryMock,
@@ -15,10 +16,12 @@ import { NotFoundException } from '@/shared/domain/exceptions/not-found.exceptio
 describe('RejectBudgetUseCase', () => {
   let sut: RejectBudgetUseCase;
   let repo: SORepositoryMock;
+  let metrics: MetricsMock;
 
   beforeEach(() => {
     repo = makeSORepositoryMock();
-    sut = new RejectBudgetUseCase(repo);
+    metrics = makeMetricsMock();
+    sut = new RejectBudgetUseCase(repo, metrics);
   });
 
   it('should transition order from AWAITING_APPROVAL to FINALIZED', async () => {
@@ -46,6 +49,16 @@ describe('RejectBudgetUseCase', () => {
     );
   });
 
+  it('should record budget rejected metric', async () => {
+    const order = makeServiceOrderWithStatus('AWAITING_APPROVAL');
+    repo.findById.mockResolvedValue(order);
+    repo.update.mockResolvedValue();
+
+    await sut.execute({ orderId: SO_UUID_1 });
+
+    expect(metrics.recordBudgetRejected).toHaveBeenCalledWith(order.id().value);
+  });
+
   it('should not reserve stock when rejecting', async () => {
     const order = makeServiceOrderWithStatus('AWAITING_APPROVAL');
     repo.findById.mockResolvedValue(order);
@@ -53,7 +66,6 @@ describe('RejectBudgetUseCase', () => {
 
     await sut.execute({ orderId: SO_UUID_1 });
 
-    // No inventory interaction expected
     expect(repo.update).toHaveBeenCalledTimes(1);
   });
 

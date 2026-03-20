@@ -11,6 +11,7 @@ import {
   type IInventoryPublicApi,
 } from '@/modules/inventory/public/inventory.public-api';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
+import { MetricsService } from '@/shared/infrastructure/metrics/metrics.service';
 
 @Injectable()
 export class ApproveBudgetUseCase {
@@ -19,6 +20,7 @@ export class ApproveBudgetUseCase {
     private readonly orders: IServiceOrderRepository,
     @Inject(INVENTORY_PUBLIC_API)
     private readonly inventoryApi: IInventoryPublicApi,
+    private readonly metrics: MetricsService,
   ) {}
 
   async execute(input: { orderId: string }): Promise<void> {
@@ -41,5 +43,12 @@ export class ApproveBudgetUseCase {
     }
 
     await this.orders.update(order);
+
+    this.metrics.recordBudgetApproved(order.id().value);
+    this.metrics.recordServiceOrderStatusChanged(
+      order.id().value,
+      'AWAITING_APPROVAL',
+      'IN_EXECUTION',
+    );
   }
 }

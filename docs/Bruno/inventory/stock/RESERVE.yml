@@ -14,7 +14,7 @@ http:
     type: json
     data: |-
       {
-        "amount": 4,
+        "amount": 94,
         "referenceId": "a1b2c3d4-9001-4000-8000-000000000001",
         "note": "Reserva OS-001"
       }

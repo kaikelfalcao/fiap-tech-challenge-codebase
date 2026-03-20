@@ -17,6 +17,7 @@ import {
 } from '@/modules/vehicle/public/vehicle.public-api';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { ValidationException } from '@/shared/domain/exceptions/validation.exception';
+import { MetricsService } from '@/shared/infrastructure/metrics/metrics.service';
 
 export interface OpenServiceOrderInput {
   customerTaxId: string;
@@ -36,6 +37,7 @@ export class OpenServiceOrderUseCase {
     private readonly customerApi: ICustomerPublicApi,
     @Inject(VEHICLE_PUBLIC_API)
     private readonly vehicleApi: IVehiclePublicApi,
+    private readonly metrics: MetricsService,
   ) {}
 
   async execute(input: OpenServiceOrderInput): Promise<OpenServiceOrderOutput> {
@@ -66,6 +68,9 @@ export class OpenServiceOrderUseCase {
     });
 
     await this.orders.save(order);
+
+    this.metrics.recordServiceOrderOpened();
+
     return { id: order.id().value };
   }
 }

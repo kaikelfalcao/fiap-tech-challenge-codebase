@@ -1,5 +1,6 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CatalogModule } from './modules/catalog/catalog.module';
@@ -12,6 +13,11 @@ import appConfig from './shared/infrastructure/config/app.config';
 import authConfig from './shared/infrastructure/config/auth.config';
 import databaseConfig from './shared/infrastructure/config/database.config';
 import { envSchema } from './shared/infrastructure/config/env.schema';
+import { HealthModule } from './shared/infrastructure/health/health.module';
+import { MetricsInterceptor } from './shared/infrastructure/interceptors/metrics.interceptor';
+import { LoggerModule } from './shared/infrastructure/logger/logger.module';
+import { MetricsModule } from './shared/infrastructure/metrics/metrics.module';
+import { RequestLoggerMiddleware } from './shared/infrastructure/middleware/request-logger.middleware';
 
 @Module({
   imports: [
@@ -63,6 +69,19 @@ import { envSchema } from './shared/infrastructure/config/env.schema';
     CatalogModule,
     ServiceOrderModule,
     IamModule,
+    HealthModule,
+    LoggerModule,
+    MetricsModule,
+  ],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: MetricsInterceptor,
+    },
   ],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(RequestLoggerMiddleware).forRoutes('*');
+  }
+}

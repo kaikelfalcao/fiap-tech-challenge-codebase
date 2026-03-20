@@ -33,17 +33,22 @@
     ]
   },
   "dependencies": {
+    "@nestjs/axios": "^4.0.1",
     "@nestjs/common": "^11.1.12",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.1.12",
     "@nestjs/jwt": "^11.0.2",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.1.12",
+    "@nestjs/terminus": "^11.1.1",
     "@nestjs/typeorm": "^11.0.0",
+    "@newrelic/winston-enricher": "^4.0.1",
     "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.3",
     "joi": "^18.0.2",
+    "nest-winston": "^1.10.2",
+    "newrelic": "^13.17.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
@@ -51,7 +56,8 @@
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
     "typeorm": "^0.3.28",
-    "uuid": "^13.0.0"
+    "uuid": "^13.0.0",
+    "winston": "^3.19.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.5.0",
@@ -64,6 +70,7 @@
     "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.6",
     "@types/jest": "^30.0.0",
+    "@types/newrelic": "^9.14.8",
     "@types/node": "^25.0.9",
     "@types/passport-jwt": "^4.0.1",
     "@types/passport-local": "^1.0.38",

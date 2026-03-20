@@ -2,6 +2,7 @@ import {
   makeInventoryApiMock,
   type InventoryApiMock,
 } from '../../helpers/external-apis.mock';
+import { makeMetricsMock, type MetricsMock } from '../../helpers/metrics.mock';
 import {
   makeSORepositoryMock,
   type SORepositoryMock,
@@ -23,11 +24,13 @@ describe('ApproveBudgetUseCase', () => {
   let sut: ApproveBudgetUseCase;
   let repo: SORepositoryMock;
   let inventoryApi: InventoryApiMock;
+  let metrics: MetricsMock;
 
   beforeEach(() => {
     repo = makeSORepositoryMock();
     inventoryApi = makeInventoryApiMock();
-    sut = new ApproveBudgetUseCase(repo, inventoryApi);
+    metrics = makeMetricsMock();
+    sut = new ApproveBudgetUseCase(repo, inventoryApi, metrics);
   });
 
   it('should transition order from AWAITING_APPROVAL to IN_EXECUTION', async () => {
@@ -53,6 +56,22 @@ describe('ApproveBudgetUseCase', () => {
     expect(order.approvedAt).not.toBeNull();
     expect(order.approvedAt!.getTime()).toBeGreaterThanOrEqual(
       before.getTime(),
+    );
+  });
+
+  it('should record budget approved and status changed metrics', async () => {
+    const order = makeServiceOrderWithStatus('AWAITING_APPROVAL');
+    repo.findById.mockResolvedValue(order);
+    inventoryApi.reserveStock.mockResolvedValue();
+    repo.update.mockResolvedValue();
+
+    await sut.execute({ orderId: SO_UUID_1 });
+
+    expect(metrics.recordBudgetApproved).toHaveBeenCalledWith(order.id().value);
+    expect(metrics.recordServiceOrderStatusChanged).toHaveBeenCalledWith(
+      order.id().value,
+      'AWAITING_APPROVAL',
+      'IN_EXECUTION',
     );
   });
 

@@ -11,6 +11,7 @@ import {
   type IInventoryPublicApi,
 } from '@/modules/inventory/public/inventory.public-api';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
+import { MetricsService } from '@/shared/infrastructure/metrics/metrics.service';
 
 @Injectable()
 export class FinalizeServiceOrderUseCase {
@@ -19,6 +20,7 @@ export class FinalizeServiceOrderUseCase {
     private readonly orders: IServiceOrderRepository,
     @Inject(INVENTORY_PUBLIC_API)
     private readonly inventoryApi: IInventoryPublicApi,
+    private readonly metrics: MetricsService,
   ) {}
 
   async execute(input: { orderId: string }): Promise<void> {
@@ -29,6 +31,9 @@ export class FinalizeServiceOrderUseCase {
       throw new NotFoundException('ServiceOrder', input.orderId);
     }
 
+    const durationMs = order.approvedAt
+      ? Date.now() - order.approvedAt.getTime()
+      : 0;
     order.finalize();
 
     // Consumir estoque reservado ao finalizar
@@ -41,5 +46,11 @@ export class FinalizeServiceOrderUseCase {
     }
 
     await this.orders.update(order);
+    this.metrics.recordServiceOrderFinalized(order.id().value, durationMs);
+    this.metrics.recordServiceOrderStatusChanged(
+      order.id().value,
+      'IN_EXECUTION',
+      'FINALIZED',
+    );
   }
 }

@@ -47,6 +47,7 @@ import { RequestLoggerMiddleware } from './shared/infrastructure/middleware/requ
           username: configService.get<string>('database.user'),
           password: configService.get<string>('database.pass'),
           database: configService.get<string>('database.name'),
+          ssl: isProd ? { rejectUnauthorized: false } : false,
 
           autoLoadEntities: true,
 

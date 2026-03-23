@@ -1,0 +1,40 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: autoflow-migration
+  namespace: autoflow
+spec:
+  ttlSecondsAfterFinished: 300
+  backoffLimit: 2
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migration
+          image: IMAGE_PLACEHOLDER
+          command:
+            - node
+            - -e
+            - |
+              const { AppDataSource } = require('./dist/src/shared/infrastructure/persistence/data-source');
+              AppDataSource.initialize()
+                .then(() => AppDataSource.runMigrations())
+                .then((migrations) => {
+                  console.log('Migrations executadas:', migrations.length);
+                  migrations.forEach(m => console.log(' -', m.name));
+                  process.exit(0);
+                })
+                .catch((err) => {
+                  console.error('Erro nas migrations:', err);
+                  process.exit(1);
+                });
+          envFrom:
+            - secretRef:
+                name: autoflow-secrets
+          env:
+            - name: DOTENV_PATH
+              value: /dev/null
+            - name: DOTENV_CONFIG_PATH
+              value: /dev/null
+            - name: NO_DOTENV
+              value: 'true'

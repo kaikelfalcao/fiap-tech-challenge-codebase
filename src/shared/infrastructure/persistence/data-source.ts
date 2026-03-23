@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv';
 import { DataSource } from 'typeorm';
 
-dotenv.config();
+dotenv.config({ override: false });
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -13,6 +13,7 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
+  ssl: isProd ? { rejectUnauthorized: false } : false,
 
   entities: [
     isProd

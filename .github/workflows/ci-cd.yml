@@ -173,7 +173,7 @@ jobs:
           HTTP=$(curl -s -o /dev/null -w "%{http_code}" \
             -X POST "http://${KONG_HOST}/auth" \
             -H "Content-Type: application/json" \
-            -d '{"cpf": "111.444.777-35"}')
+            -d '{"cpf": "293.085.420-00"}')
 
           echo "Auth endpoint → HTTP ${HTTP}"
           [ "$HTTP" = "200" ] || { echo "Smoke test falhou!"; exit 1; }

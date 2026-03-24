@@ -1,0 +1,19 @@
+info:
+  name: DELIVER
+  type: http
+  seq: 12
+
+http:
+  method: PATCH
+  url: "{{BASE_URL}}/service-orders/:id/deliver"
+  params:
+    - name: id
+      value: 2b07276e-ba34-4fb3-b53a-dc669ffb1003
+      type: path
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

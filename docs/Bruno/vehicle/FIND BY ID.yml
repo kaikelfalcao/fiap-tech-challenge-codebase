@@ -1,0 +1,19 @@
+info:
+  name: FIND BY ID
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: "{{BASE_URL}}/vehicles/:id"
+  params:
+    - name: id
+      value: 77d710f2-6b5b-4e00-86d1-a21b56ef9fda
+      type: path
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

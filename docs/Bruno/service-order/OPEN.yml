@@ -1,0 +1,24 @@
+info:
+  name: OPEN
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{BASE_URL}}/service-orders"
+  body:
+    type: json
+    data: |-
+      {
+        "customerTaxId": "529.982.247-25",
+        "vehicleLicensePlate": "ABC-1234"
+      }
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjMzJkZGFlOC02MTJlLTRjNjAtOWY5Ny03Y2VmMjYyMzM0YmEiLCJ0YXhJZCI6IjA2NDE0NTU1NTA5IiwibmFtZSI6IkthaWtlIEZhbGNhbyIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3Mzk3MDg4NiwiZXhwIjoxNzc0MDU3Mjg2fQ.6ryeRP2vb5HxfMk6ikF9zHa3xTrGguATM5ZLxTT7q9w
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

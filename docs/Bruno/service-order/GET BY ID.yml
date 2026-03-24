@@ -1,0 +1,19 @@
+info:
+  name: GET BY ID
+  type: http
+  seq: 3
+
+http:
+  method: GET
+  url: "{{BASE_URL}}/service-orders/:id"
+  params:
+    - name: id
+      value: 2b07276e-ba34-4fb3-b53a-dc669ffb1003
+      type: path
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

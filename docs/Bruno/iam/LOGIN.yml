@@ -1,0 +1,22 @@
+info:
+  name: LOGIN
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{BASE_URL}}/iam/login"
+  body:
+    type: json
+    data: |-
+      {
+        "taxId": "064.145.555-09",
+        "password": "123kaike123"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

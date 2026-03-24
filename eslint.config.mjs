@@ -1,43 +1,39 @@
 import { defineConfig } from 'eslint/config';
 import tseslint from 'typescript-eslint';
 import prettier from 'eslint-plugin-prettier';
+import importPlugin from 'eslint-plugin-import';
 
 export default defineConfig([
   {
-    ignores: ['dist/**', 'node_modules/**'],
+    ignores: ['dist', 'node_modules'],
   },
+
   {
-    files: ['src/**/*.ts', 'prisma/**/*.ts'],
+    files: ['**/*.ts'],
+
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
-        project: './tsconfig.json',
+        project: true,
       },
     },
+
     plugins: {
       '@typescript-eslint': tseslint.plugin,
       prettier,
+      import: importPlugin,
     },
+
     rules: {
-      '@typescript-eslint/naming-convention': [
-        'error',
-        {
-          selector: 'variableLike',
-          format: ['camelCase', 'PascalCase', 'UPPER_CASE'],
-          leadingUnderscore: 'allow',
-        },
-        { selector: 'typeLike', format: ['PascalCase'] },
-        { selector: 'enumMember', format: ['PascalCase'] },
-      ],
-
-      '@typescript-eslint/array-type': ['error', { default: 'array-simple' }],
-
-      '@/semi': ['error', 'always'],
-
-      quotes: ['error', 'single', { avoidEscape: true }],
-
+      /*
+       * Qualidade
+       */
       eqeqeq: ['error', 'always'],
+      curly: ['error', 'all'],
 
+      /*
+       * Typescript
+       */
       '@typescript-eslint/no-unused-vars': [
         'warn',
         {
@@ -46,6 +42,37 @@ export default defineConfig([
         },
       ],
 
+      '@typescript-eslint/consistent-type-imports': 'error',
+
+      /*
+       * Import rules
+       */
+      'import/order': [
+        'error',
+        {
+          groups: [
+            'builtin',
+            'external',
+            'internal',
+            'parent',
+            'sibling',
+            'index',
+          ],
+          'newlines-between': 'always',
+          alphabetize: {
+            order: 'asc',
+            caseInsensitive: true,
+          },
+        },
+      ],
+
+      'import/no-duplicates': 'error',
+      'import/newline-after-import': 'error',
+
+      /*
+       * Prettier
+       */
+      quotes: ['error', 'single', { avoidEscape: true }],
       'prettier/prettier': 'error',
     },
   },

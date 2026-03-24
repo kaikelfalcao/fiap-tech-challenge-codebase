@@ -1,0 +1,19 @@
+info:
+  name: DEACTIVATE
+  type: http
+  seq: 6
+
+http:
+  method: PATCH
+  url: "{{BASE_URL}}/inventory/items/:id/deactivate"
+  params:
+    - name: id
+      value: 7c31063f-35a8-4e33-8553-46abb710f877
+      type: path
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

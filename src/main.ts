@@ -1,50 +1,30 @@
-import 'dotenv/config';
-import 'tsconfig-paths/register';
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import 'newrelic';
+
 import { AppModule } from './app.module';
-import { ConfigService } from './infrastructure/config/config.service';
-import { GlobalExceptionFilter } from './interface/http/filters/global-exception.filter';
-import { LoggingInterceptor } from './interface/http/interceptors/logging.interceptor';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { Logger } from '@nestjs/common';
+import { DomainExceptionFilter } from './shared/infrastructure/filters/domain-exception.filter';
 
 async function bootstrap() {
-  const logger = new Logger('Bootstrap');
-  const app = await NestFactory.create(AppModule);
-  const config = app.get(ConfigService);
-  app.setGlobalPrefix('api');
-  app.useGlobalFilters(new GlobalExceptionFilter());
-  app.useGlobalInterceptors(new LoggingInterceptor());
-
-  const configSwagger = new DocumentBuilder()
-    .setTitle('Tech Challenge – Service Order API')
-    .setDescription(
-      `
-API para gestão de clientes, veículos, peças, reparos e ordens de serviço.
-
-Esta API permite:
-- Autenticação via JWT
-- Cadastro e consulta de clientes e veículos
-- Controle de peças e reparos
-- Criação e atualização de ordens de serviço
-- Aprovação ou rejeição de ordens via link por e-mail
-- Consulta pública de ordens por cliente + veículo
-
-⚠️ Rotas protegidas exigem token JWT no header Authorization: Bearer <token>.
-`,
-    )
-    .setVersion('1.0.5')
-    .addBearerAuth()
-    .addServer('http://localhost:3000', 'Ambiente local')
-    .build();
-
-  const document = SwaggerModule.createDocument(app, configSwagger);
-  SwaggerModule.setup('docs', app, document, {
-    swaggerOptions: {
-      persistAuthorization: true,
-    },
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
   });
-  await app.listen(config.app.port);
-  logger.log(`Swagger Docs on :${config.app.port}/docs`);
+  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
+
+  app.enableShutdownHooks();
+  app.setGlobalPrefix('api');
+
+  app.useGlobalFilters(new DomainExceptionFilter());
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
+
+  await app.listen(process.env.PORT ?? 3000);
 }
-bootstrap();
+void bootstrap();

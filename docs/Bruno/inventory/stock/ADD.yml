@@ -1,0 +1,27 @@
+info:
+  name: ADD
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{BASE_URL}}/inventory/items/:id/stock/add"
+  params:
+    - name: id
+      value: 49db3fcd-f8d1-4c39-b664-9119cd944227
+      type: path
+  body:
+    type: json
+    data: |-
+      {
+          "amount": 50,
+          "reason": "PURCHASE",
+          "note": "Compra NF-2024-001"
+        }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,178 @@
+name: CD
+
+on:
+  push:
+    tags: ["v*.*.*"]
+
+env:
+  AWS_REGION: us-east-1
+  IMAGE_NAME: kaikelfalcao/autoflow
+  LAMBDA_STACK: autoflow-auth-homolog
+  K8S_CLUSTER: fiap-tc-dev-eks
+  K8S_NAMESPACE: autoflow
+  K8S_DEPLOYMENT: autoflow
+
+jobs:
+  # ── 1. Testes ────────────────────────────────────────────────────────────────
+  test:
+    name: Lint + Format + Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm run test
+
+  # ── 2. Docker build + push ────────────────────────────────────────────────────
+  docker:
+    name: Build & Push Docker Image
+    needs: test
+    runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.meta.outputs.version }}
+      image_tags: ${{ steps.meta.outputs.tags }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Gera as tags: v1.2.3 → 1.2.3, 1.2 e latest
+      - uses: docker/metadata-action@v5
+        id: meta
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=latest
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ── 3. Deploy EKS ─────────────────────────────────────────────────────────────
+  deploy:
+    name: Deploy → EKS
+    needs: docker
+    runs-on: ubuntu-latest
+    environment: production
+
+    env:
+      IMAGE_TAG: ${{ needs.docker.outputs.image_tag }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Configure kubectl
+        run: |
+          aws eks update-kubeconfig \
+            --region ${{ env.AWS_REGION }} \
+            --name ${{ env.K8S_CLUSTER }}
+
+      - name: Get DB outputs from tfstate
+        run: |
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          TFSTATE_BUCKET="fiap-tc-tfstate-${ACCOUNT_ID}"
+
+          aws s3 cp "s3://${TFSTATE_BUCKET}/db-infra/terraform.tfstate" /tmp/db.tfstate
+
+          DB_HOST=$(jq -r '.outputs.db_address.value'  /tmp/db.tfstate)
+          DB_NAME=$(jq -r '.outputs.db_name.value'     /tmp/db.tfstate)
+          DB_USER=$(jq -r '.outputs.db_username.value' /tmp/db.tfstate)
+          DB_PASS=$(jq -r '.outputs.db_password.value' /tmp/db.tfstate)
+
+          {
+            echo "DB_HOST=${DB_HOST}"
+            echo "DB_NAME=${DB_NAME}"
+            echo "DB_USER=${DB_USER}"
+            echo "DB_PASS=${DB_PASS}"
+          } >> $GITHUB_ENV
+
+      - name: Apply namespace
+        run: kubectl apply -f k8s/namespace.yaml
+
+      - name: Update Kubernetes secret
+        run: |
+          kubectl create secret generic autoflow-secrets \
+            -n ${{ env.K8S_NAMESPACE }} \
+            --from-literal=NODE_ENV=production \
+            --from-literal=DB_HOST="${{ env.DB_HOST }}" \
+            --from-literal=DB_PORT=5432 \
+            --from-literal=DB_USER="${{ env.DB_USER }}" \
+            --from-literal=DB_PASS="${{ env.DB_PASS }}" \
+            --from-literal=DB_NAME="${{ env.DB_NAME }}" \
+            --from-literal=JWT_SECRET="${{ secrets.JWT_SECRET }}" \
+            --from-literal=JWT_EXPIRES_IN=1d \
+            --from-literal=NEW_RELIC_ENABLED=true \
+            --from-literal=NEW_RELIC_APP_NAME=autoflow-tc \
+            --from-literal=NEW_RELIC_LICENSE_KEY="${{ secrets.NEWRELIC_LICENSE_KEY }}" \
+            --from-literal=NEW_RELIC_ACCOUNT_ID="${{ secrets.NEWRELIC_ACCOUNT_ID }}" \
+            --from-literal=NEW_RELIC_LOG_LEVEL=info \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Run migrations
+        run: |
+          kubectl delete job autoflow-migration \
+            -n ${{ env.K8S_NAMESPACE }} 2>/dev/null || true
+
+          sed "s|IMAGE_PLACEHOLDER|${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}|g" \
+            k8s/migration-job.yaml | kubectl apply -f -
+
+          kubectl wait --for=condition=complete job/autoflow-migration \
+            -n ${{ env.K8S_NAMESPACE }} --timeout=180s
+
+          kubectl logs -n ${{ env.K8S_NAMESPACE }} job/autoflow-migration
+
+      - name: Apply manifests
+        run: |
+          kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/service.yaml
+          kubectl apply -f k8s/hpa.yaml
+
+      - name: Update image + rollout
+        run: |
+          kubectl set image deployment/${{ env.K8S_DEPLOYMENT }} \
+            autoflow=${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} \
+            -n ${{ env.K8S_NAMESPACE }}
+
+          kubectl rollout status deployment/${{ env.K8S_DEPLOYMENT }} \
+            -n ${{ env.K8S_NAMESPACE }} --timeout=300s
+
+      - name: Smoke test
+        run: |
+          KONG_HOST=$(kubectl get svc -n kong kong-kong-proxy \
+            -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+
+          HTTP=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X POST "http://${KONG_HOST}/auth" \
+            -H "Content-Type: application/json" \
+            -d '{"cpf": "111.444.777-35"}')
+
+          echo "Auth endpoint → HTTP ${HTTP}"
+          [ "$HTTP" = "200" ] || { echo "Smoke test falhou!"; exit 1; }

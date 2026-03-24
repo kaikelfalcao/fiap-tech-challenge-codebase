@@ -1,7 +1,7 @@
-# ---------- Builder ----------
-FROM node:24-alpine3.22 AS builder
+# ---------- STAGE 1: BUILD ----------
+FROM node:lts-alpine AS builder
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
 COPY package*.json ./
 
@@ -12,16 +12,18 @@ COPY . .
 RUN npm run build
 
 
-# ---------- Runtime ----------
-FROM node:24-alpine3.22 AS runner
+# ---------- STAGE 2: PRODUCTION ----------
+FROM node:lts-alpine
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
 ENV NODE_ENV=production
 
-COPY --from=builder /usr/src/app/package*.json ./
-COPY --from=builder /usr/src/app/node_modules ./node_modules
-COPY --from=builder /usr/src/app/dist ./dist
+COPY package*.json ./
+
+RUN npm ci --omit=dev --ignore-scripts
+
+COPY --from=builder /app/dist ./dist
 
 EXPOSE 3000
 

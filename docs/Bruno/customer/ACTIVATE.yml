@@ -1,0 +1,19 @@
+info:
+  name: ACTIVATE
+  type: http
+  seq: 5
+
+http:
+  method: PATCH
+  url: "{{BASE_URL}}/customers/:id/activate"
+  params:
+    - name: id
+      value: ad2de104-58db-4235-83e5-2a2679d11b90
+      type: path
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

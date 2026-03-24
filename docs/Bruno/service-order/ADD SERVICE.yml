@@ -1,0 +1,26 @@
+info:
+  name: ADD SERVICE
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{BASE_URL}}/service-orders/:id/services"
+  params:
+    - name: id
+      value: 2b07276e-ba34-4fb3-b53a-dc669ffb1003
+      type: path
+  body:
+    type: json
+    data: |-
+      {
+        "serviceId": "10014070-76f0-476b-899d-c4849da87cc8",
+        "quantity": 1
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

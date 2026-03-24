@@ -1,0 +1,27 @@
+info:
+  name: UPDATE
+  type: http
+  seq: 4
+
+http:
+  method: PATCH
+  url: "{{BASE_URL}}/customers/:id"
+  params:
+    - name: id
+      value: ad2de104-58db-4235-83e5-2a2679d11b90
+      type: path
+  body:
+    type: json
+    data: |-
+      {
+          "fullName": "John Doe Updated",
+          "phone": "(71) 98888-1111",
+          "email": "john.updated@doe.com"
+        }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: tech-challenge-service
+  name: autoflow
+  namespace: autoflow
 spec:
-  type: NodePort
   selector:
-    app: tech-challenge-api
+    app: autoflow
   ports:
-    - port: 3000
+    - port: 80
       targetPort: 3000
-      nodePort: 30000
+  type: ClusterIP

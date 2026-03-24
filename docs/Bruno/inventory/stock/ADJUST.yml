@@ -1,0 +1,26 @@
+info:
+  name: ADJUST
+  type: http
+  seq: 5
+
+http:
+  method: POST
+  url: "{{BASE_URL}}/inventory/items/:id/stock/adjust"
+  params:
+    - name: id
+      value: 49db3fcd-f8d1-4c39-b664-9119cd944227
+      type: path
+  body:
+    type: json
+    data: |-
+      {
+        "newQuantity": 100,
+        "note": "Inventário anual — recontagem física"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

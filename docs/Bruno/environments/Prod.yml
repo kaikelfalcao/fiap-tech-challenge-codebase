@@ -1,4 +1,4 @@
 name: Prod
 variables:
   - name: BASE_URL
-    value: http://a162f87a538da40fca38e5682ee43799-6b36d1172ef688ac.elb.us-east-1.amazonaws.com/api
+    value: http://a78c51ca247134cd8b1b20dc4391ac1e-f16bdf76318b34c7.elb.us-east-1.amazonaws.com/api

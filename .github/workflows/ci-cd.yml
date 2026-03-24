@@ -132,6 +132,7 @@ jobs:
             --from-literal=NEW_RELIC_ENABLED=true \
             --from-literal=NEW_RELIC_APP_NAME=autoflow-tc \
             --from-literal=NEW_RELIC_LICENSE_KEY="${{ secrets.NEWRELIC_LICENSE_KEY }}" \
+            --from-literal=NEW_RELIC_ACCOUNT_ID="${{ secrets.NEWRELIC_ACCOUNT_ID }}" \
             --from-literal=NEW_RELIC_LOG_LEVEL=info \
             --dry-run=client -o yaml | kubectl apply -f -
 

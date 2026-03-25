@@ -1,19 +1,53 @@
 # autoflow — codebase
 
 API de gestão de oficina mecânica do **AutoFlow**, desenvolvida com NestJS e
-TypeScript seguindo Clean Architecture.
+TypeScript seguindo Clean Architecture. Gerencia clientes, veículos, estoque,
+catálogo de serviços e ordens de serviço.
 
 ## Tecnologias
 
 | Camada          | Tecnologia              |
 | --------------- | ----------------------- |
 | Runtime         | Node.js 20              |
-| Framework       | NestJS + TypeScript     |
-| Banco de dados  | PostgreSQL via TypeORM  |
+| Framework       | NestJS 11 + TypeScript 5|
+| Banco de dados  | PostgreSQL 16 via TypeORM|
 | Containerização | Docker / Docker Compose |
 | Orquestração    | Kubernetes (EKS)        |
 | Observabilidade | New Relic APM           |
 | CI/CD           | GitHub Actions          |
+| Imagem          | Docker Hub (`kaikelfalcao/autoflow`) |
+
+## Arquitetura
+
+```mermaid
+graph TD
+    Internet((Internet))
+
+    subgraph AWS["AWS — us-east-1"]
+        Kong["Kong NLB\n(público)"]
+
+        subgraph VPC["VPC Privada"]
+            subgraph EKS["EKS — namespace: autoflow"]
+                HPA["HPA\n(2–6 réplicas)"]
+                App["autoflow Deployment\nNestJS :3000"]
+                Svc["Service ClusterIP\n:80 → :3000"]
+                MigJob["migration-job\nTypeORM migrations"]
+            end
+
+            RDS[("RDS PostgreSQL 16\nsubnet privada")]
+        end
+    end
+
+    DockerHub["Docker Hub\nkaikelfalcao/autoflow:{tag}"]
+
+    Internet -->|"/api/*"| Kong
+    Kong --> Svc
+    Svc --> App
+    HPA -.->|"escala"| App
+    App -->|"TypeORM"| RDS
+    MigJob -->|"migration:run"| RDS
+    DockerHub -->|"kubectl set image"| App
+```
 
 ## Posição no fluxo multi-repo
 
@@ -26,11 +60,44 @@ TypeScript seguindo Clean Architecture.
 ```
 
 O pipeline (`ci-cd.yml`) lê automaticamente do S3:
-
 - `db-infra/terraform.tfstate` → `db_address`, `db_name`, `db_username`, `db_password`
 
-E cria/atualiza o `kubernetes_secret autoflow-secrets` no namespace `autoflow`
+E cria/atualiza o Kubernetes Secret `autoflow-secrets` no namespace `autoflow`
 combinando os valores do S3 com `JWT_SECRET` e `NEWRELIC_LICENSE_KEY` do GitHub.
+
+## Documentação da API
+
+A coleção completa de requisições está disponível no **Bruno** (REST client):
+
+```
+docs/Bruno/
+  catalog/        ← endpoints de catálogo de produtos e serviços
+  customer/       ← endpoints de clientes
+  health/         ← /api/health, /liveness, /readiness
+  iam/            ← endpoints de identity & access management
+  inventory/      ← endpoints de estoque
+  service-order/  ← endpoints de ordens de serviço
+  vehicle/        ← endpoints de veículos
+```
+
+Para usar: instale o [Bruno](https://www.usebruno.com/), abra a pasta
+`docs/Bruno/` como coleção e configure a variável `baseUrl` com o endpoint
+do Kong ou `http://localhost:3000` para desenvolvimento local.
+
+### Endpoints principais
+
+| Módulo        | Prefixo           | Descrição                             |
+| ------------- | ----------------- | ------------------------------------- |
+| IAM           | `/api/iam`        | Usuários e permissões                 |
+| Customer      | `/api/customers`  | Cadastro de clientes                  |
+| Vehicle       | `/api/vehicles`   | Veículos dos clientes                 |
+| Catalog       | `/api/catalog`    | Produtos e serviços do catálogo       |
+| Inventory     | `/api/inventory`  | Controle de estoque                   |
+| Service Order | `/api/service-orders` | Ordens de serviço e transições   |
+| Health        | `/api/health`     | Status da aplicação                   |
+
+> Todas as rotas (exceto `/api/health`, `/liveness`, `/readiness`) requerem
+> `Authorization: Bearer <token>` obtido via `POST /auth` no Kong.
 
 ## Documentação Arquitetural
 
@@ -43,54 +110,36 @@ Documentação completa em [`docs/architecture/`](docs/architecture/README.md):
 - [ADRs](docs/architecture/README.md#adrs--architecture-decision-records) — Clean Arch, Kong, HPA, JSONB
 - [Diagrama ER](docs/architecture/database/er-diagram.md)
 
-## Arquitetura
-
-```
-Internet
-    │
-    ▼ (Kong NLB)
-POST /auth  →  Lambda (auth)
-/api/*      →  autoflow Service (ClusterIP :80 → :3000)
-                    │
-                    ▼
-              autoflow Deployment (2–6 réplicas, HPA)
-                    │
-              ┌─────┴──────┐
-              │            │
-         Migrations    TypeORM
-              │            │
-              └─────┬──────┘
-                    ▼
-              RDS PostgreSQL
-              (subnet privada)
-```
-
 ## Estrutura
 
 ```
 src/
   main.ts             ← bootstrap NestJS (prefixo /api, validação, logger)
-  app.module.ts       ← módulo raiz
+  app.module.ts       ← módulo raiz (ConfigModule, TypeORM, features)
   shared/             ← entidades base, value objects, exceções de domínio
-  config/             ← env schema (Joi), database, auth, app configs
-  health/             ← /api/health, /liveness, /readiness
-  metrics/            ← New Relic custom metrics
-  features/           ← Customer, Vehicle, Inventory, Catalog, ServiceOrder, IAM
+  modules/
+    catalog/          ← catálogo de produtos e serviços
+    customer/         ← gestão de clientes
+    iam/              ← identity & access management
+    inventory/        ← controle de estoque
+    service-order/    ← ordens de serviço e transições de status
+    vehicle/          ← veículos dos clientes
 
 k8s/
   namespace.yaml      ← namespace autoflow
   secret.yaml         ← TEMPLATE — o pipeline cria o secret dinamicamente
-  deployment.yaml     ← 2 réplicas, probes, New Relic injection
+  deployment.yaml     ← 2 réplicas, liveness/readiness probes, New Relic
   service.yaml        ← ClusterIP porta 80 → 3000
   hpa.yaml            ← escala de 2 a 6 réplicas (CPU 70%, mem 80%)
-  migration-job.yaml  ← Job TypeORM migrations
+  migration-job.yaml  ← Job TypeORM migrations (roda antes do rollout)
 
-scripts/
-  (em desenvolvimento)
+docs/
+  Bruno/              ← coleção de requisições REST (Bruno client)
+  architecture/       ← componentes, sequências, ER diagram, ADRs, RFCs
 
 .github/workflows/
-  ci.yml     ← lint + format + test (push/PR para main e develop)
-  ci-cd.yml  ← build Docker + push + deploy EKS (push de tags v*.*.*)
+  ci.yml              ← lint + format + test (push/PR para main e develop)
+  ci-cd.yml           ← build Docker + push + deploy EKS (push de tags v*.*.*)
 ```
 
 ## Secrets no GitHub
@@ -110,16 +159,23 @@ lidos automaticamente do state S3 pelo pipeline.
 
 ## CI/CD
 
-| Evento               | Comportamento                                           |
-| -------------------- | ------------------------------------------------------- |
-| Push/PR em `main`    | lint + format:check + testes                            |
-| Push de tag `v*.*.*` | Testa → build + push Docker → deploy EKS (com approval) |
+| Evento               | Comportamento                                            |
+| -------------------- | -------------------------------------------------------- |
+| Push/PR em `main`    | lint + format:check + testes                             |
+| Push de tag `v*.*.*` | Testa → build + push Docker → deploy EKS (com approval)  |
 
-### Fluxo do deploy (ci-cd.yml)
+### Fluxo do deploy (`ci-cd.yml`)
 
-1. **test** — lint, format, testes
-2. **docker** — `docker build`, push para `kaikelfalcao/autoflow:{tag}`
-3. **deploy** — configure kubectl → lê DB do S3 tfstate → cria/atualiza `autoflow-secrets` → roda migrations (Job) → aplica manifests → `kubectl rollout` → smoke test via Kong
+1. **test** — lint, format check, testes unitários
+2. **docker** — `docker build` multi-stage, push para `kaikelfalcao/autoflow:{tag}`
+3. **deploy**:
+   - Configura `kubectl` para o cluster `fiap-tc-dev-eks`
+   - Lê credenciais DB do state S3 (`db-infra/terraform.tfstate`)
+   - Cria/atualiza Secret `autoflow-secrets` no namespace `autoflow`
+   - Aplica manifests (`namespace`, `deployment`, `service`, `hpa`)
+   - Roda migrations via Job (`migration-job.yaml`)
+   - `kubectl set image` + `kubectl rollout status`
+   - Smoke test via Kong
 
 ## Desenvolvimento local
 
@@ -149,21 +205,29 @@ npm run start:dev
 
 ```bash
 # Configure as credenciais AWS em .env.local.aws (veja .env.local.aws.example)
-# Execute para gerar o .env com valores do RDS real:
-./scripts/local-env.sh
+./scripts/local-env.sh   # gera .env com valores reais do RDS
 npm run start:dev
 ```
 
-> O RDS só aceita conexões de dentro da VPC. Você precisa de um bastion host
-> ou de um `kubectl port-forward` para acessar de fora do cluster.
+> O RDS só aceita conexões de dentro da VPC. Use um bastion host ou
+> `kubectl port-forward` para acessar externamente.
 
 ### Testes
 
 ```bash
 npm run test          # unitários
 npm run test:cov      # com cobertura
+npm run test:e2e      # end-to-end
 npm run lint
 npm run format:check
+```
+
+### Migrations
+
+```bash
+npm run migration:generate -- src/modules/<modulo>/migrations/<NomeMigration>
+npm run migration:run
+npm run migration:revert   # desfaz a última migration
 ```
 
 ## Deploy manual no EKS
@@ -211,13 +275,11 @@ kubectl set image deployment/autoflow \
 kubectl rollout status deployment/autoflow -n autoflow
 ```
 
-## Observações sobre o secret.yaml
+## Observações
 
-O arquivo `k8s/secret.yaml` é um **template de documentação** — não contém
-valores reais e não é aplicado pela pipeline. O secret real é criado
-diretamente pelo `ci-cd.yml` via `kubectl create secret --dry-run=client`.
-
-Nunca commite credenciais reais no `k8s/secret.yaml`.
+- O `k8s/secret.yaml` é um **template de documentação** — não contém valores reais e não é aplicado pela pipeline. O secret real é criado via `kubectl create secret --dry-run=client`. Nunca commite credenciais reais nesse arquivo.
+- O session token AWS expira em ~4h — atualize antes de cada deploy manual.
+- O HPA escala de 2 a 6 réplicas com base em CPU (70%) e memória (80%).
 
 ## Autores
 

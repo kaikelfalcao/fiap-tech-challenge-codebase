@@ -6,7 +6,9 @@ info:
 http:
   method: GET
   url: "{{BASE_URL}}/vehicles"
-  auth: inherit
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxYzJhYmZkMS1kNjkxLTRkMTQtYjc0Mi0xNzRjZTE1YWUwM2IiLCJjdXN0b21lcklkIjpudWxsLCJ0YXhJZCI6IjI5MzA4NTQyMDAwIiwibmFtZSI6IkFkbWluIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzc0Mzk2ODM3LCJleHAiOjE3NzQ0MDQwMzd9.BtbGS5BjRFXRqK3CeXleKTEfSEe2BeUSlgfzS24nUm0
 
 settings:
   encodeUrl: true

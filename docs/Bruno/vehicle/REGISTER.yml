@@ -10,13 +10,15 @@ http:
     type: json
     data: |-
       {
-          "customerId": "b88d91d5-b3dc-4567-a992-a495b45695c4",
+          "customerId": "63c50c94-24c8-49a4-bc2b-6852c8043f49",
           "licensePlate": "ABC-1234",
           "brand": "Toyota",
           "model": "Corolla",
           "year": 2022
         }
-  auth: inherit
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxYzJhYmZkMS1kNjkxLTRkMTQtYjc0Mi0xNzRjZTE1YWUwM2IiLCJjdXN0b21lcklkIjpudWxsLCJ0YXhJZCI6IjI5MzA4NTQyMDAwIiwibmFtZSI6IkFkbWluIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzc0Mzk2ODM3LCJleHAiOjE3NzQ0MDQwMzd9.BtbGS5BjRFXRqK3CeXleKTEfSEe2BeUSlgfzS24nUm0
 
 settings:
   encodeUrl: true
